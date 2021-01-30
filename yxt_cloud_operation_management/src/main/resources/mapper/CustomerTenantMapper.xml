@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.yxt.dao.CustomerTenantMapper">
+  <resultMap id="BaseResultMap" type="com.java.yxt.vo.CustomerTenantVo">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="customer_code" jdbcType="VARCHAR" property="customerCode" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+  </resultMap>
+
+  <select id="selectByCustomerCode" resultMap="BaseResultMap" >
+    select id,customer_code,tenant_id
+    from mgt_customer_tenant_relation
+    where 1=1
+    and customer_code = #{customerCode,jdbcType=VARCHAR}
+  </select>
+
+  <insert id="insert" parameterType="com.java.yxt.vo.CustomerTenantVo" keyProperty="id" useGeneratedKeys="true">
+    insert into mgt_customer_tenant_relation (customer_code,tenant_id)
+    values (#{customerCode,jdbcType=VARCHAR}, #{tenantId,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertList" parameterType="com.java.yxt.vo.CustomerTenantVo" keyProperty="id" useGeneratedKeys="true">
+    insert into mgt_customer_tenant_relation (customer_code,tenant_id)
+    values  <foreach collection="list" separator="," index="index" item="item">
+    (#{item.customerCode,jdbcType=VARCHAR}, #{item.tenantId,jdbcType=VARCHAR})
+  </foreach>
+  </insert>
+
+  <update id="update" parameterType="com.java.yxt.vo.CustomerTenantVo">
+
+    update mgt_customer_tenant_relation
+    set
+      customer_code = #{customerCode,jdbcType=VARCHAR},
+      tenant_id=#{tenantId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <delete id="delete" parameterType="com.java.yxt.vo.CustomerTenantVo">
+    delete from mgt_customer_tenant_relation
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+</mapper>

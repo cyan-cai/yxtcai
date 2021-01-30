@@ -1,0 +1,103 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: 50MB
+
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+  shardingsphere:
+    datasource:
+      mgt:
+        #公钥
+        publickey: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAIL34/TiBwGdbv0oAKUeaQlepd9wydkNgjKPqy6l1CkUpS9UKKQ9vjIxzzbxDMja0PHn3mo5dEqce+fdZtT9ASECAwEAAQ==
+        driver-class-name: com.mysql.jdbc.Driver
+        #password: 123456
+        password: egUADYIoIdYUEf44OhqzrIUTmgzPaNEF2qk4KQ1WYxHPqgljm7s8ZcgKzpsMLjr18noyR5tbnvKrIFKWooPGRg==
+        type: com.alibaba.druid.pool.DruidDataSource
+        url: jdbc:mysql://192.168.10.194:3306/mgt?useUnicode=true&characterEncoding=utf-8&useSSL=false
+        username: root
+        names: mgt
+      props:
+        sql:
+          show: true
+
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: true
+
+  #热部署生效
+  devtools:
+    restart:
+      enabled: false
+      #设置重启的目录
+      additional-paths: src/main/java
+      #classpath目录下的WEB-INF文件夹内容修改不重启
+      exclude : WEB-INF/**
+
+
+
+#默认log4j2.xml
+logging:
+  level:
+    com.java.yxt.dao: debug
+  config: classpath:log4j2-test.xml
+
+#redis配置
+redis:
+  address:
+    enable: true
+    singleAddress:
+    clusterAddress: redis://192.168.10.191:6379,redis://192.168.10.192:6379,redis://192.168.10.193:6379,redis://192.168.10.194:6379,redis://192.168.10.195:6379,redis://192.168.10.196:6379
+    masterAddress:
+    slaveAddress:
+    username:
+    password:
+    database: 1
+
+#rocketMQ配置
+rocketmq:
+  producer: #生产者配置
+    isOnOff: true #是否开启配置 true开启，否则关闭
+    groupName: operation_management_group #组名
+    namesrvAddr: 192.168.10.194:9876;192.168.10.195:9876;192.168.10.196:9876 #地址
+    retryTimesWhenSendFailed: 2 #发送失败重试次数
+  consumer: #消费者配置
+    isOnOff: true #是否开启配置 true开启，否则关闭
+    groupName: operation_management_consumer
+    namesrvAddr: 192.168.10.194:9876;192.168.10.195:9876;192.168.10.196:9876 #地址
+    topics: SD_TOPIC~CHARGING_REQ_TAG||CHARGE_NOTIFY_TAG #上报topic
+    consumeMessageBatchMaxSize: 1 #批量消费数量
+    
+#feign参数设置
+feign:
+  hystrix:
+    enabled: true
+  client:
+    config:
+      default:
+        connectTimeout: 2000
+        readTimeout: 10000
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 600000
+          strategy: SEMAPHORE #采用信号量隔离策略，否则请求头无法传入值
+
+mybatis:
+  config-location: classpath:mybatis/mybatis-config.xml
+  mapper-locations: classpath:mybatis/mapper/*.xml,classpath:mapper/*.xml
+
+#同步核心网ftp参数设置
+ftp:
+  host: 192.168.10.186
+  port: 21
+  username: yhd1
+  password: 123456
+  basePath: /home/yhd1/
+  filePath: /ftp_data

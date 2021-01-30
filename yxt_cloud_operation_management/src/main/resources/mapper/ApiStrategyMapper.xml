@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.yxt.dao.ApiStrategyMapper">
+
+  <resultMap id="BaseResultMap" type="com.java.yxt.vo.ApiStrategyVo">
+
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="api_id" jdbcType="VARCHAR" property="apiId" />
+    <result column="apiName" jdbcType="VARCHAR" property="apiName" />
+    <result column="apiCategory" jdbcType="VARCHAR" property="apiCategory" />
+    <result column="apiCatalogName" jdbcType="VARCHAR" property="apiCatalogName" />
+    <result column="month_limit" jdbcType="INTEGER" property="monthLimit" />
+    <result column="day_limit" jdbcType="INTEGER" property="dayLimit" />
+    <result column="second_limit" jdbcType="INTEGER" property="secondLimit" />
+    <result column="day_from" jdbcType="VARCHAR" property="dayFrom" />
+    <result column="day_to" jdbcType="VARCHAR" property="dayTo" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="creater_id" jdbcType="VARCHAR" property="createrId" />
+    <result column="creater_name" jdbcType="VARCHAR" property="createrName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="updater_id" jdbcType="VARCHAR" property="updaterId" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+
+
+  <delete id="delete" parameterType="com.java.yxt.vo.ApiStrategyVo">
+
+    delete from mgt_api_strategy
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.java.yxt.vo.ApiStrategyVo" keyColumn="id">
+
+    insert into mgt_api_strategy (api_id, month_limit, day_limit,
+      second_limit, day_from, day_to, 
+      `status`, tenant_id, creater_id, creater_name,
+      create_time
+      )
+    values (#{apiId,jdbcType=VARCHAR}, #{monthLimit,jdbcType=INTEGER}, #{dayLimit,jdbcType=INTEGER},
+      #{secondLimit,jdbcType=INTEGER}, #{dayFrom,jdbcType=VARCHAR}, #{dayTo,jdbcType=VARCHAR},
+      #{status,jdbcType=SMALLINT}, #{tenantId,jdbcType=VARCHAR}, #{createrId,jdbcType=VARCHAR}, #{createrName,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+
+  <update id="update" parameterType="com.java.yxt.vo.ApiStrategyVo">
+    update mgt_api_strategy
+    <set>
+    <if test=" apiId !=null and apiId !='' ">
+      api_id = #{apiId,jdbcType=VARCHAR},
+    </if>
+    <if test="monthLimit !=null">
+      month_limit = #{monthLimit,jdbcType=INTEGER},
+    </if>
+    <if test="dayLimit !=null">
+      day_limit = #{dayLimit,jdbcType=INTEGER},
+    </if>
+    <if test="secondLimit !=null">
+      second_limit = #{secondLimit,jdbcType=INTEGER},
+    </if>
+    <if test=" dayFrom !=null and dayFrom !=''">
+      day_from = #{dayFrom,jdbcType=VARCHAR},
+    </if>
+    <if test=" dayTo !=null and dayTo !=''">
+      day_to = #{dayTo,jdbcType=VARCHAR},
+    </if>
+    <if test=" status !=null">
+      `status` = #{status,jdbcType=SMALLINT},
+    </if>
+      updater_id = #{updaterId,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <select id="select"  resultMap="BaseResultMap">
+    select ma.name as apiName,ma.api_category as apiCategory,mac.name as apiCatalogName,mas.id, ma.id as api_id, month_limit,
+    day_limit, second_limit, day_from, day_to, mas.`status`,
+    mas.tenant_id, mas.creater_id, mas.create_time, mas.updater_id, mas.update_time,mas.creater_name
+    from mgt_api ma
+    left join mgt_api_strategy mas on ma.id=mas.api_id
+    left join mgt_api_relation_catalog marc on marc.api_id=ma.id
+    left join mgt_api_catalog mac on mac.id = marc.api_catalog_id
+    where 1=1
+    <if test="apiStrategyVo.apiName !=null and apiStrategyVo.apiName !=''">
+     and ma.name like concat('%',#{apiStrategyVo.apiName,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="apiStrategyVo.apiCatalogName !=null and apiStrategyVo.apiCatalogName !=''">
+     and mac.name like concat('%',#{apiStrategyVo.apiCatalogName,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="apiStrategyVo.apiCategory !=null and apiStrategyVo.apiCategory !=''">
+     and ma.api_category = #{apiStrategyVo.apiCategory,jdbcType=VARCHAR}
+    </if>
+
+  </select>
+
+</mapper>

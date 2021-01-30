@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.yxt.dao.TerminalMapper">
+  <resultMap id="BaseResultMap" type="com.java.yxt.vo.TerminalVo">
+
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="msisdn" jdbcType="CHAR" property="msisdn" />
+    <result column="imsi" jdbcType="VARCHAR" property="imsi" />
+    <result column="industry" jdbcType="VARCHAR" property="industry" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="user_status" jdbcType="VARCHAR" property="userStatus" />
+    <result column="charge" jdbcType="SMALLINT" property="charge" />
+    <result column="source" jdbcType="VARCHAR" property="source" />
+    <result column="customer_id" jdbcType="VARCHAR" property="customerId" />
+    <result column="customer_code" jdbcType="VARCHAR" property="customerCode" />
+    <result column="name" jdbcType="VARCHAR" property="customerName" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="creater_id" jdbcType="VARCHAR" property="createrId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="updater_id" jdbcType="VARCHAR" property="updaterId" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="terminal_factory" jdbcType="VARCHAR" property="terminalFactory" />
+  </resultMap>
+
+  <delete id="deleteByPrimaryKey" parameterType="com.java.yxt.vo.TerminalVo">
+    delete from mgt_terminal
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insert" parameterType="com.java.yxt.vo.TerminalVo" keyProperty="id" useGeneratedKeys="true">
+    insert into mgt_terminal (msisdn, imsi, industry,url,
+      `type`, user_status, charge, user_name,
+      `source`, customer_id, `status`,
+      tenant_id, creater_id, create_time,creater_name,terminal_factory)
+    values (#{msisdn,jdbcType=VARCHAR}, #{imsi,jdbcType=VARCHAR}, #{industry,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR},
+      #{type,jdbcType=VARCHAR}, #{userStatus,jdbcType=VARCHAR}, #{charge,jdbcType=SMALLINT}, #{userName,jdbcType=VARCHAR},
+      #{source,jdbcType=VARCHAR}, #{customerId,jdbcType=VARCHAR}, #{status,jdbcType=SMALLINT},
+      #{tenantId,jdbcType=VARCHAR}, #{createrId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},#{createrName,jdbcType=VARCHAR},
+      #{terminalFactory,jdbcType=VARCHAR}
+      )
+  </insert>
+
+  <insert id="insertList" parameterType="java.util.List" >
+   insert into mgt_terminal (msisdn, imsi, industry,url,
+      `type`, user_status, charge, user_name,
+      `source`, customer_id, `status`,
+      tenant_id, creater_id, create_time, update_time, creater_name, terminal_factory)
+    values
+    <foreach collection="list" separator="," index="index" item="item">
+     (#{item.msisdn,jdbcType=VARCHAR}, #{item.imsi,jdbcType=VARCHAR}, #{item.industry,jdbcType=VARCHAR}, #{item.url,jdbcType=VARCHAR},
+      #{item.type,jdbcType=VARCHAR}, #{item.userStatus,jdbcType=VARCHAR}, #{item.charge,jdbcType=SMALLINT}, #{item.userName,jdbcType=VARCHAR},
+      #{item.source,jdbcType=VARCHAR}, #{item.customerId,jdbcType=VARCHAR}, #{item.status,jdbcType=SMALLINT},
+      #{item.tenantId,jdbcType=VARCHAR}, #{item.createrId,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP},#{item.updateTime,jdbcType=TIMESTAMP},
+      #{item.createrName,jdbcType=VARCHAR},#{item.terminalFactory,jdbcType=VARCHAR})
+    </foreach>
+    ON DUPLICATE KEY UPDATE
+    imsi = values(imsi),
+    industry = values(industry),
+    url = values(url),
+    `type` = values(`type`),
+    user_status = values(user_status),
+    charge = values(charge),
+    `source` = values(`source`),
+    tenant_id = values(tenant_id),
+    creater_id = values(creater_id),
+    update_time = values(update_time),
+    creater_name = values(creater_name),
+    terminal_factory = values(terminal_factory)
+  </insert>
+
+	<insert id="insertupload" parameterType="com.java.yxt.vo.TerminalVo" keyProperty="id" useGeneratedKeys="true">
+   insert into mgt_terminal (msisdn, imsi, industry,url,
+      `type`, user_status, charge, user_name,
+      `source`, customer_id, `status`,
+      tenant_id, creater_id, create_time, update_time, creater_name, terminal_factory)
+    values (#{msisdn,jdbcType=VARCHAR}, #{imsi,jdbcType=VARCHAR}, #{industry,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR},
+      #{type,jdbcType=VARCHAR}, #{userStatus,jdbcType=VARCHAR}, #{charge,jdbcType=SMALLINT}, #{userName,jdbcType=VARCHAR},
+      #{source,jdbcType=VARCHAR}, #{customerId,jdbcType=VARCHAR}, #{status,jdbcType=SMALLINT},
+      #{tenantId,jdbcType=VARCHAR}, #{createrId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},#{updateTime,jdbcType=TIMESTAMP},
+      #{createrName,jdbcType=VARCHAR},#{terminalFactory,jdbcType=VARCHAR}
+      )
+    ON DUPLICATE KEY UPDATE
+    imsi = values(imsi),
+    industry = values(industry),
+    url = values(url),
+    `type` = values(`type`),
+    user_status = values(user_status),
+    charge = values(charge),
+    `source` = values(`source`),
+    tenant_id = values(tenant_id),
+    creater_id = values(creater_id),
+    update_time = values(update_time),
+    creater_name = values(creater_name),
+    terminal_factory = values(terminal_factory)
+  </insert>
+	
+
+
+  <update id="update" parameterType="com.java.yxt.vo.TerminalVo">
+    update mgt_terminal
+    set
+      <if test="msisdn !=null and msisdn !=''">
+        msisdn = #{msisdn,jdbcType=CHAR},
+      </if>
+      <if test="imsi !=null and imsi !=''">
+        imsi = #{imsi,jdbcType=VARCHAR},
+      </if>
+      <if test="url !=null">
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="industry !=null and industry !=''">
+        industry = #{industry,jdbcType=VARCHAR},
+      </if>
+      <if test="type !=null and type !=''">
+        `type` = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="userStatus !=null">
+        user_status = #{userStatus,jdbcType=VARCHAR},
+      </if>
+      <if test=" charge !=null">
+        charge = #{charge,jdbcType=SMALLINT},
+      </if>
+      <if test="source !=null">
+        `source` = #{source,jdbcType=VARCHAR},
+      </if>
+      <if test="customerId !=null and customerId !=''">
+        customer_id = #{customerId,jdbcType=VARCHAR},
+      </if>
+      <if test="status !=null">
+        `status` = #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="tenantId !=null and tenantId !=''">
+        tenant_id = #{tenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="terminalFactory !=null and terminalFactory !=''">
+        terminal_factory = #{terminalFactory,jdbcType=VARCHAR},
+      </if>
+      updater_id = #{updaterId,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateBymsisdn" parameterType="com.java.yxt.vo.TerminalVo">
+    update mgt_terminal
+    set
+    <if test="userStatus !=null">
+      user_status = #{userStatus,jdbcType=VARCHAR},
+    </if>
+    where msisdn = #{msisdn,jdbcType=VARCHAR}
+  </update>
+
+
+  <select id="unRelationCustomer" parameterType="com.java.yxt.vo.TerminalVo" resultMap="BaseResultMap">
+    select mt.id, msisdn, imsi,url, industry, mt.`type`, user_status, mt.charge, mt.`source`, customer_id,
+    mt.`status`,mt.user_name, mt.creater_id, mt.create_time, mt.updater_id, mt.update_time, mt.terminal_factory
+    from mgt_terminal mt where (customer_id is null or customer_id ='' )
+    <if test="terminalVo.msisdn !=null and terminalVo.msisdn !=''">
+    and  mt.msisdn like concat('%',#{terminalVo.msisdn,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="terminalVo.userName !=null and terminalVo.userName !=''">
+    and mt.user_name like concat('%',#{terminalVo.userName,jdbcType=VARCHAR},'%')
+    </if>
+    and user_status = 1
+  </select>
+
+  <update id="relationCustomer" >
+    update mgt_terminal
+    set customer_id=#{customerId,jdbcType=VARCHAR}
+    where id in
+    <foreach collection="relationTerminalVos" item="item" index="index"
+             open="(" separator="," close=")">#{item.id}
+    </foreach>
+  </update>
+
+  <update id="updateCustomerIdNull" parameterType="java.util.List">
+    update mgt_terminal set customer_id = null
+    where id in
+    <foreach collection="unRelationTerminalVos" item="item" index="index"
+             open="(" separator="," close=")">#{item.id}
+    </foreach>
+  </update>
+
+  <select id="queryTerminalInfo" resultMap="BaseResultMap">
+    select mt.id, msisdn, imsi,url, industry, mt.`type`, user_status, mt.charge, mt.`source`, customer_id,
+    mt.`status`,mt.user_name, mt.creater_id, mt.create_time, mt.updater_id, mt.update_time, mt.terminal_factory
+    from mgt_terminal mt where 1=1
+    <if test="terminalVo.customerId !=null and terminalVo.customerId !=''">
+      and customer_id = #{terminalVo.customerId,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalVo.msisdn !=null and terminalVo.msisdn !=''">
+      and msisdn like concat('%',#{terminalVo.msisdn,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="terminalVo.type !=null and terminalVo.type !=''">
+      and `type` =#{terminalVo.type,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalVo.terminalFactory !=null and terminalVo.terminalFactory !=''">
+      and  terminal_factory like concat('%', #{terminalVo.terminalFactory,jdbcType=VARCHAR},'%')
+    </if>
+  </select>
+
+  <select id="select" resultMap="BaseResultMap">
+    select mt.id, msisdn, imsi,url, industry, mt.`type`, user_status, mt.charge, mt.`source`, customer_id,
+    mt.`status`,mt.user_name, mt.creater_id, mt.create_time, mt.updater_id, mt.update_time, mt.terminal_factory
+    from mgt_terminal mt where 1=1
+    <if test="terminalVo.customerId !=null and terminalVo.customerId !=''">
+      and customer_id = #{terminalVo.customerId,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalVo.id !=null and terminalVo.id !=''">
+      and id = #{terminalVo.id,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalVo.msisdn !=null and terminalVo.msisdn !=''">
+      and msisdn like concat('%',#{terminalVo.msisdn,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="terminalVo.imsi !=null and terminalVo.imsi !=''">
+      and imsi like concat('%',#{terminalVo.imsi,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="terminalVo.type !=null and terminalVo.type !=''">
+      and `type` =#{terminalVo.type,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalVo.userStatus !=null and terminalVo.userStatus !=''">
+      and user_status =#{terminalVo.userStatus,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalVo.source !=null and terminalVo.source !=''">
+      and source =#{terminalVo.source,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalVo.userName !=null and terminalVo.userName !=''">
+      and user_name like concat('%',#{terminalVo.userName,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="terminalVo.url !=null and terminalVo.url !=''">
+      and url like concat('%',#{terminalVo.url,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="terminalVo.terminalFactory !=null and terminalVo.terminalFactory !=''">
+      and  terminal_factory like concat('%', #{terminalVo.terminalFactory,jdbcType=VARCHAR},'%')
+    </if>
+  </select>
+
+
+  <select id="selectAll" parameterType="com.java.yxt.vo.TerminalVo" resultMap="BaseResultMap">
+    select mt.id, msisdn, imsi,url, industry, mt.`type`, user_status, mt.charge, mt.`source`, customer_id,
+    mt.`status`,mt.user_name, mt.creater_id, mt.create_time, mt.updater_id, mt.update_time, mt.terminal_factory
+    from mgt_terminal mt where 1=1
+    <if test="terminalVo.customerId !=null and terminalVo.customerId !=''">
+      and customer_id = #{terminalVo.customerId,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalVo.id !=null and terminalVo.id !=''">
+      and id = #{terminalVo.id,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalVo.msisdn !=null and terminalVo.msisdn !=''">
+      and msisdn like concat('%',#{terminalVo.msisdn,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="terminalVo.imsi !=null and terminalVo.imsi !=''">
+      and imsi like concat('%',#{terminalVo.imsi,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="terminalVo.type !=null and terminalVo.type !=''">
+      and `type` =#{terminalVo.type,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalVo.userStatus !=null and terminalVo.userStatus !=''">
+      and user_status =#{terminalVo.userStatus,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalVo.source !=null and terminalVo.source !=''">
+      and source =#{terminalVo.source,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalVo.userName !=null and terminalVo.userName !=''">
+      and user_name like concat('%',#{terminalVo.userName,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="terminalVo.url !=null and terminalVo.url !=''">
+      and url like concat('%',#{terminalVo.url,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="terminalVo.terminalFactory !=null and terminalVo.terminalFactory !=''">
+      and  terminal_factory like concat('%', #{terminalVo.terminalFactory,jdbcType=VARCHAR},'%')
+    </if>
+        order by  mt.create_time desc
+  </select>
+
+
+
+  <select id="selectcustomerbymsisdn" parameterType="com.java.yxt.vo.TerminalVo" resultType="com.java.yxt.vo.TerminalVo">
+    select a.id, msisdn, imsi,url, industry, a.`type`, user_status, a.charge, `source`, customer_id,
+    a.`status`, b.name as customerName,b.id as customerId,b.customer_code
+    from mgt_terminal a,mgt_customer b
+    where a.customer_id = b.id and a.user_status='1' and b.`status`=1
+    <if test="msisdn !=null and msisdn !=''">
+      and msisdn like concat('%',#{msisdn,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="customerName !=null and customerName !=''">
+      and b.name like concat('%',#{customerName,jdbcType=VARCHAR},'%')
+    </if>
+  </select>
+
+  <select id="selectdistinctcustomerbymsisdn" parameterType="com.java.yxt.vo.TerminalVo" resultType="com.java.yxt.vo.TerminalVo">
+    select  b.name as customerName
+    from mgt_terminal a,mgt_customer b
+    where a.customer_id = b.id and a.user_status='1' and b.`status`=1
+    <if test="customerName !=null and customerName !=''">
+      and b.name like concat('%',#{customerName,jdbcType=VARCHAR},'%')
+    </if>
+    group by b.name
+  </select>
+
+
+  <select id="selectterminalbymsisdn" parameterType="com.java.yxt.vo.TerminalVo" resultType="com.java.yxt.vo.TerminalVo">
+    select mt.id, msisdn, imsi,url, industry, mt.`type`, user_status, mt.charge, mt.`source`, customer_id,
+    mt.`status`,mt.user_name, mt.creater_id, mt.create_time, mt.updater_id, mt.update_time, mt.terminal_factory
+    from mgt_terminal mt where 1=1 and mt.user_status='1'
+      and mt.msisdn = #{msisdn,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectterminalbymsisdnandcustomername" parameterType="com.java.yxt.vo.TerminalVo" resultType="com.java.yxt.vo.TerminalVo">
+    select a.id, msisdn, imsi,url, industry, a.`type`, user_status, a.charge, `source`, customer_id,
+    a.`status`, b.name as customerName,b.id as customerId,b.customer_code as customerCode,a.terminal_factory
+    from mgt_terminal a,mgt_customer b
+    where a.customer_id = b.id and a.user_status='1' and b.`status`=1
+      and msisdn = #{msisdn,jdbcType=VARCHAR}
+      and b.name = #{customerName,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectterminalbyname" parameterType="com.java.yxt.vo.TerminalVo" resultType="com.java.yxt.vo.TerminalVo">
+    select mt.id, msisdn, imsi,url, industry, mt.`type`, user_status, mt.charge, mt.`source`, customer_id,
+    mt.`status`,mt.user_name, mt.creater_id, mt.create_time, mt.updater_id, mt.update_time, mt.terminal_factory
+    from mgt_terminal mt where 1=1
+      and mt.user_name = #{userName,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectterminalbynameandmsisdn" parameterType="com.java.yxt.vo.TerminalVo" resultType="com.java.yxt.vo.TerminalVo">
+    select mt.id, msisdn, imsi,url, industry, mt.`type`, user_status, mt.charge, mt.`source`, customer_id,
+    mt.`status`,mt.user_name, mt.creater_id, mt.create_time, mt.updater_id, mt.update_time, mt.terminal_factory
+    from mgt_terminal mt where 1=1
+      and mt.user_name = #{userName,jdbcType=VARCHAR}
+      and mt.msisdn = #{msisdn,jdbcType=VARCHAR}
+  </select>
+
+</mapper>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.yxt.dao.TerminalDeviceMapper2">
+	<sql id="Base_Column_List">
+		id,
+		imei,
+		type,
+		company,
+		model,
+		meid,
+		status,
+		remark,
+		tenant_id,
+		creater_id,
+		create_time,
+		updater_id,
+		update_time
+
+	</sql>
+	<select id="selectTerminalDeviceList"
+		parameterType="com.java.yxt.vo.TermainDeviceQueryVo"
+		resultType="com.java.yxt.vo.TerminalDeviceVo2">
+		select
+		<include refid="Base_Column_List"></include>
+		from mgt_terminal_device
+		<where>
+			1=1
+			<if test="param.imei!=null and param.imei!=''">
+				and imei like CONCAT('%', #{param.imei}, '%')
+			</if>
+			<if test="param.type!=null and param.type!=''">
+				and type=#{param.type}
+			</if>
+			<if test="param.company!=null and param.company!=''">
+				and company like CONCAT('%', #{param.company}, '%')
+			</if>
+
+			<if test="param.model!=null and param.model!=''">
+				and model like CONCAT('%', #{param.model}, '%')
+			</if>
+
+			<if test="param.meid!=null and param.meid!=''">
+				and meid like CONCAT('%', #{param.meid}, '%')
+			</if>
+
+			<if test="param.status!=null and param.status!=''">
+				and status=#{param.status}
+			</if>
+
+			<if test="param.createTimeStart!=null">
+				and create_time >=#{param.createTimeStart}
+			</if>
+
+			<if test="param.createTimeEnd!=null">
+				<![CDATA[
+				and create_time 
+				<=#{param.createTimeEnd}]]>
+			</if>
+
+		</where>
+	</select>
+</mapper>

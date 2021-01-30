@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.yxt.dao.CustomerMapper">
+  <resultMap id="BaseResultMap" type="com.java.yxt.vo.CustomerVo">
+
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="customer_code" jdbcType="VARCHAR" property="customerCode" />
+    <result column="customer_business_code" jdbcType="VARCHAR" property="customerBusinessCode" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="charge" jdbcType="SMALLINT" property="charge" />
+    <result column="phone_num" jdbcType="VARCHAR" property="phoneNum" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="limit" jdbcType="SMALLINT" property="limit" />
+    <result column="customer_status" jdbcType="VARCHAR" property="customerStatus" />
+    <result column="service_way" jdbcType="VARCHAR" property="serviceWay" />
+    <result column="level" jdbcType="VARCHAR" property="level" />
+    <result column="level_seq" jdbcType="VARCHAR" property="levelSeq" />
+    <result column="SaaS" jdbcType="SMALLINT" property="saas" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="creater_id" jdbcType="VARCHAR" property="createrId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="updater_id" jdbcType="VARCHAR" property="updaterId" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="industry_list" jdbcType="VARCHAR" property="industryList" />
+  </resultMap>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="com.java.yxt.vo.CustomerVo">
+    delete from mgt_customer
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.java.yxt.vo.CustomerVo" keyProperty="id" useGeneratedKeys="true">
+    insert into mgt_customer (id,customer_business_code,customer_code, `name`, ip,
+      charge, phone_num, email, 
+      `type`, `limit`, customer_status, 
+      service_way, `level`, level_seq, 
+      SaaS, `status`, tenant_id, 
+      creater_id, create_time, industry_list, update_time, creater_name)
+    values (#{id,jdbcType=VARCHAR},#{customerBusinessCode,jdbcType=VARCHAR},#{customerCode,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR},
+      #{charge,jdbcType=SMALLINT}, #{phoneNum,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{type,jdbcType=VARCHAR}, #{limit,jdbcType=SMALLINT}, #{customerStatus,jdbcType=VARCHAR}, 
+      #{serviceWay,jdbcType=VARCHAR}, #{level,jdbcType=VARCHAR}, #{levelSeq,jdbcType=VARCHAR}, 
+      #{saas,jdbcType=SMALLINT}, #{status,jdbcType=SMALLINT}, #{tenantId,jdbcType=VARCHAR}, 
+      #{createrId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{industryList,jdbcType=LONGVARCHAR},
+      #{updateTime,jdbcType=TIMESTAMP}, #{createrName,jdbcType=VARCHAR})
+       ON DUPLICATE KEY UPDATE
+    customer_business_code = values(customer_business_code),
+    ip = values(ip),
+    charge = values(charge),
+    `type` = values(`type`),
+    `limit` = values(`limit`),
+    customer_status = values(customer_status),
+    service_way = values(service_way),
+    `level` = values(`level`),
+    level_seq = values(level_seq),
+    industry_list =values(industry_list),
+    update_time = values(update_time),
+    SaaS = values (Saas),
+    creater_name = values(creater_name)
+  </insert>
+
+
+  <insert id="insertList" parameterType="java.util.List">
+    insert into mgt_customer (id,customer_code,customer_business_code, `name`, ip,
+      charge, phone_num, email,
+      `type`, `limit`, customer_status,
+      service_way, `level`, level_seq,
+      SaaS, `status`, tenant_id,
+      creater_id, create_time, industry_list)
+    values
+    <foreach collection="list" separator="," index="index" item="item">
+      (#{item.id,jdbcType=VARCHAR},#{item.customerCode,jdbcType=VARCHAR},#{item.customerBusinessCode,jdbcType=VARCHAR}, #{item.name,jdbcType=VARCHAR}, #{item.ip,jdbcType=VARCHAR},
+      #{item.charge,jdbcType=SMALLINT}, #{item.phoneNum,jdbcType=VARCHAR}, #{item.email,jdbcType=VARCHAR},
+      #{item.type,jdbcType=VARCHAR}, #{item.limit,jdbcType=SMALLINT}, #{item.customerStatus,jdbcType=VARCHAR},
+      #{item.serviceWay,jdbcType=VARCHAR}, #{item.level,jdbcType=VARCHAR}, #{item.levelSeq,jdbcType=VARCHAR},
+      #{item.saas,jdbcType=SMALLINT}, #{item.status,jdbcType=SMALLINT}, #{item.tenantId,jdbcType=VARCHAR},
+      #{item.createrId,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.industryList,jdbcType=LONGVARCHAR})
+    </foreach>
+    ON DUPLICATE KEY UPDATE
+    customer_business_code = values(customer_business_code),
+    ip = values(ip),
+    charge = values(charge),
+    `type` = values(`type`),
+    `limit` = values(`limit`),
+    customer_status = values(customer_status),
+    service_way = values(service_way),
+    `level` = values(`level`),
+    level_seq = values(level_seq),
+    industry_list =values(industry_list),
+    update_time = values(update_time),
+    SaaS = values (Saas),
+    creater_name = values(creater_name)
+  </insert>
+
+  <update id="update" parameterType="com.java.yxt.vo.CustomerVo">
+
+    update mgt_customer
+    <set>
+      <if test="customerCode !=null and customerCode !=''">
+        customer_code = #{customerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="customerBusinessCode !=null and customerBusinessCode !=''">
+      customer_business_code = #{customerBusinessCode,jdbcType=VARCHAR},
+      </if>
+      <if test="name !=null and name !=''">
+      `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="ip !=null and ip !=''">
+      ip = #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="charge !=null ">
+      charge = #{charge,jdbcType=SMALLINT},
+      </if>
+      <if test="phoneNum !=null and phoneNum !=''">
+      phone_num = #{phoneNum,jdbcType=VARCHAR},
+      </if>
+      <if test="email !=null and email !=''">
+      email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="type !=null and type !=''">
+      `type` = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="limit !=null">
+      `limit` = #{limit,jdbcType=SMALLINT},
+      </if>
+      <if test="customerStatus !=null and customerStatus !=''">
+      customer_status = #{customerStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceWay !=null and serviceWay !=''">
+      service_way = #{serviceWay,jdbcType=VARCHAR},
+      </if>
+      <if test="level !=null and level !=''">
+      `level` = #{level,jdbcType=VARCHAR},
+      </if>
+      <if test="levelSeq !=null and levelSeq !=''">
+      level_seq = #{levelSeq,jdbcType=VARCHAR},
+      </if>
+      <if test="saas !=null">
+      SaaS = #{saas,jdbcType=SMALLINT},
+      </if>
+      <if test="status !=null">
+      `status` = #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="updaterId !=null and updaterId !=''">
+      updater_id = #{updaterId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null ">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="industryList != null and industryList !=''">
+        industry_list = #{industryList,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateId" parameterType="com.java.yxt.vo.CustomerVo">
+    update mgt_customer
+    set
+      id = #{orgId,jdbcType=SMALLINT}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateStatus" parameterType="com.java.yxt.vo.CustomerVo">
+    update mgt_customer
+    set
+      `status` = #{customerVo.status,jdbcType=SMALLINT},
+    <if test="customerVo.saas !=null ">
+      SaaS = #{customerVo.saas,jdbcType=SMALLINT}
+    </if>
+    where id = #{customerVo.id,jdbcType=VARCHAR}
+  </update>
+
+  <select id="select" resultMap="BaseResultMap">
+    select id, customer_code, customer_business_code,`name`, ip, charge, phone_num, email, `type`, `limit`,
+    customer_status, service_way, `level`, level_seq, SaaS, `status`, tenant_id, creater_id, 
+    create_time, updater_id, update_time, industry_list
+    from mgt_customer
+    where 1=1
+    <if test="customerVo.id !=null and customerVo.id !=''">
+     and id = #{customerVo.id,jdbcType=VARCHAR}
+    </if>
+    <if test="customerVo.customerCode !=null and customerVo.customerCode !=''" >
+     and  customer_code like concat('%',#{customerVo.customerCode,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="customerVo.customerBusinessCode !=null and customerVo.customerBusinessCode !=''" >
+      and  customer_business_code like concat('%',#{customerVo.customerBusinessCode,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="customerVo.name !=null and customerVo.name !=''">
+      and `name` like concat('%',#{customerVo.name,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="customerVo.ip !=null and customerVo.ip !=''">
+      and ip like concat('%',#{customerVo.ip,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="customerVo.phoneNum !=null and customerVo.phoneNum !=''">
+      and phone_num like concat('%',#{customerVo.phoneNum,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="customerVo.type !=null and customerVo.type !=''">
+      and `type` like concat('%',#{customerVo.type,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="customerVo.limit !=0">
+      and `limit` =#{customerVo.limit,jdbcType=INTEGER}
+    </if>
+    <if test="customerVo.customerStatus !=0">
+      and customer_status =#{customerVo.customerStatus,jdbcType=VARCHAR}
+    </if>
+    <if test="customerVo.serviceWay !=null and customerVo.serviceWay !=''">
+      and service_way like concat('%',#{customerVo.serviceWay,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="customerVo.level !=0">
+      and `level` =#{customerVo.level,jdbcType=VARCHAR}
+    </if>
+    <if test="customerVo.status !=null">
+      and `status` =#{customerVo.status,jdbcType=VARCHAR}
+    </if>
+    <if test="customerVo.levelSeq !=null">
+      and level_seq like concat('%',#{customerVo.levelSeq,jdbcType=VARCHAR},'%')
+    </if>
+  </select>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, customer_code,customer_business_code, `name`, ip, charge, phone_num, email, `type`, `limit`,
+    customer_status, service_way, `level`, level_seq, SaaS, `status`, tenant_id, creater_id,
+    create_time, updater_id, update_time, industry_list
+    from mgt_customer
+    where 1=1
+    <if test="customerVo.id !=null and customerVo.id !=''">
+      and id = #{customerVo.id,jdbcType=VARCHAR}
+    </if>
+    <if test="customerVo.customerCode !=null and customerVo.customerCode !=''" >
+      and  customer_code like concat('%',#{customerVo.customerCode,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="customerVo.customerBusinessCode !=null and customerVo.customerBusinessCode !=''" >
+      and  customer_business_code like concat('%',#{customerVo.customerBusinessCode,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="customerVo.name !=null and customerVo.name !=''">
+      and `name` like concat('%',#{customerVo.name,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="customerVo.ip !=null and customerVo.ip !=''">
+      and ip like concat('%',#{customerVo.ip,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="customerVo.phoneNum !=null and customerVo.phoneNum !=''">
+      and phone_num like concat('%',#{customerVo.phoneNum,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="customerVo.type !=null and customerVo.type !=''">
+      and `type` like concat('%',#{customerVo.type,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="customerVo.limit !=null and customerVo.limit !=''">
+      and `limit` =#{customerVo.limit,jdbcType=INTEGER}
+    </if>
+    <if test="customerVo.customerStatus !=null and customerVo.customerStatus !=''">
+      and customer_status =#{customerVo.customerStatus,jdbcType=VARCHAR}
+    </if>
+    <if test="customerVo.serviceWay !=null and customerVo.serviceWay !=''">
+      and service_way like concat('%',#{customerVo.serviceWay,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="customerVo.level !=null and customerVo.level !=''">
+      and `level` =#{customerVo.level,jdbcType=VARCHAR}
+    </if>
+    <if test="customerVo.status !=null">
+      and `status` =#{customerVo.status,jdbcType=VARCHAR}
+    </if>
+    <if test="customerVo.levelSeq !=null">
+      and level_seq like concat('%',#{customerVo.levelSeq,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="customerVo.saas !=null">
+      and SaaS = #{customerVo.saas,jdbcType=SMALLINT}
+    </if>
+        order by create_time desc
+  </select>
+
+  <select id="selectByMsisdn" parameterType="com.java.yxt.dto.CustomerDto" resultType="com.java.yxt.dto.CustomerDto">
+      select distinct a.id, b.msisdn,b.imsi,a.name,c.`desc` as typeName
+      from mgt_customer a ,mgt_terminal b,mgt_dict c,mgt_terminal_white mtw,mgt_terminal_callback_service mtcs
+      where a.id=b.customer_id
+      and c.`type`='terminal_type'
+      and c.code=b.`type`
+      and b.id=mtw.terminal_id
+      and mtw.terminal_id=mtcs.terminal_id
+      and mtw.status=1
+    <if test="customerDto.msisdn !=null and customerDto.msisdn !=''">
+     and  b.msisdn like concat('%', #{customerDto.msisdn,jdbcType=VARCHAR} , '%')
+    </if>
+    <if test="customerDto.customerId !=null and customerDto.customerId !=''">
+      and  b.customer_id = #{customerDto.customerId,jdbcType=VARCHAR}
+    </if>
+    <if test="customerDto.customerCode !=null and customerDto.customerCode !=''">
+      and  a.customer_code = #{customerDto.customerCode,jdbcType=VARCHAR}
+    </if>
+    <if test="customerDto.apiCategory !=null and customerDto.apiCategory !=''">
+      and  mtcs.api_category = #{customerDto.apiCategory,jdbcType=VARCHAR}
+    </if>
+    <if test="customerDto.msisdnList !=null and customerDto.msisdnList.size()>0">
+        and  b.msisdn not in
+      <foreach collection="customerDto.msisdnList" item="item" index="index" separator="," close=")" open="(">
+        #{item}
+      </foreach>
+    </if>
+    </select>
+
+  <select id="selectCommon" resultType="com.java.yxt.vo.CustomerVo">
+        select ms.id as serviceId,mc.customer_code as customerCode,ms.service_code as serviceCode,ms.callback_url as  callbackUrl,
+        mp.channel,mc.name
+        from mgt_customer mc, mgt_service ms,mgt_production mp
+        where mc.customer_code=ms.customer_code and mp.sale_code = ms.product_id
+        <if test="customerDto.serviceIds !=null and customerDto.serviceIds.size()>0">
+          and ms.id in
+          <foreach collection="customerDto.serviceIds" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+          </foreach>
+        </if>
+        and mc.`status` = 1
+        and ms.start_time &lt; now()
+        and ms.end_time > now()
+        and mp.`status` = 1
+  </select>
+
+  <select id="selectCustomerByCustomerCode" resultMap="BaseResultMap">
+    select id, customer_code,customer_business_code, `name`, ip, charge, phone_num, email, `type`, `limit`,
+    customer_status, service_way, `level`, level_seq, SaaS, `status`, tenant_id, creater_id,
+    create_time, updater_id, update_time, industry_list
+    from mgt_customer
+    where 1=1
+     and  customer_code = #{customerVo.customerCode,jdbcType=VARCHAR}
+  </select>
+
+
+  <select id="selectCustomerByCustomerId" resultMap="BaseResultMap">
+    select id, customer_code,customer_business_code, `name`, ip, charge, phone_num, email, `type`, `limit`,
+    customer_status, service_way, `level`, level_seq, SaaS, `status`, tenant_id, creater_id,
+    create_time, updater_id, update_time, industry_list
+    from mgt_customer
+    where 1=1 and `status`=1
+     and  id= #{customerVo.id,jdbcType=VARCHAR}
+     and  `name`= #{customerVo.name,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectCustomerByCustomerName" resultMap="BaseResultMap">
+    select id, customer_code,customer_business_code, `name`, ip, charge, phone_num, email, `type`, `limit`,
+    customer_status, service_way, `level`, level_seq, SaaS, `status`, tenant_id, creater_id,
+    create_time, updater_id, update_time, industry_list
+    from mgt_customer
+    where 1=1
+     and  `name` = #{customerVo.name,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectCustomerByCustomerCodeAndCustomerName" resultMap="BaseResultMap">
+    select id, customer_code,customer_business_code, `name`, ip, charge, phone_num, email, `type`, `limit`,
+    customer_status, service_way, `level`, level_seq, SaaS, `status`, tenant_id, creater_id,
+    create_time, updater_id, update_time, industry_list
+    from mgt_customer
+    where 1=1
+     and  customer_code = #{customerVo.customerCode,jdbcType=VARCHAR}
+     and  `name` = #{customerVo.name,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectCustomerBySrcTermId" resultMap="BaseResultMap">
+    select id, customer_code,customer_business_code, `name`, ip, charge, phone_num, email, `type`, `limit`,
+    customer_status, service_way, `level`, level_seq, SaaS, `status`, tenant_id, creater_id,
+    create_time, updater_id, update_time, industry_list , srcTerm_id
+    from mgt_customer
+    where 1=1
+     and  srcTerm_id = #{srcTermId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectCustomerByCustomerCodes" resultMap="BaseResultMap">
+    select id, customer_code,customer_business_code, `name`, ip, charge, phone_num, email, `type`, `limit`,
+    customer_status, service_way, `level`, level_seq, SaaS, `status`, tenant_id, creater_id,
+    create_time, updater_id, update_time, industry_list
+    from mgt_customer
+    where  customer_code in
+    <foreach collection="customerCodes" item="customerCode" index="index"
+                   open="(" separator="," close=")">#{customerCode}
+  </foreach>
+  </select>
+</mapper>

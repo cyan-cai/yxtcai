@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.yxt.dao.TerminalAuditMapper">
+  <resultMap id="BaseResultMap" type="com.java.yxt.vo.TerminalDeviceAuditDetailVo">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="audit_id" jdbcType="VARCHAR" property="auditId" />
+    <result column="audit_result" jdbcType="SMALLINT" property="auditResult" />
+    <result column="audit_name" jdbcType="VARCHAR" property="auditName" />
+    <result column="audit_time" jdbcType="TIMESTAMP" property="auditTime" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="creater_id" jdbcType="VARCHAR" property="createrId" />
+    <result column="creater_name" jdbcType="VARCHAR" property="createrName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="updater_id" jdbcType="VARCHAR" property="updaterId" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+
+  <select id="selectAll" parameterType="com.java.yxt.vo.TerminalDeviceAuditDetailVo" resultMap="BaseResultMap">
+    select  id, audit_id , audit_result , audit_name,
+    audit_time ,remark, tenant_id, creater_id, creater_name,create_time, updater_id, update_time
+    from mgt_device_audit_detail where 1=1
+      and audit_id = #{auditId,jdbcType=VARCHAR}
+  </select>
+
+  <insert id="insert" parameterType="com.java.yxt.vo.TerminalDeviceAuditDetailVo" keyProperty="id" useGeneratedKeys="true">
+    insert into mgt_device_audit_detail (  audit_id , audit_result , audit_name,
+      audit_time , remark, tenant_id, creater_id, creater_name,create_time )
+    values ( #{auditId,jdbcType=VARCHAR}, #{auditResult,jdbcType=SMALLINT},
+       #{auditName,jdbcType=VARCHAR}, #{auditTime,jdbcType=TIMESTAMP},
+      #{remark,jdbcType=VARCHAR}, #{tenantId,jdbcType=VARCHAR},  #{createrId,jdbcType=VARCHAR},
+      #{createrName,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+
+  <delete id="delete" parameterType="com.java.yxt.vo.TerminalDeviceAuditDetailVo">
+    delete from mgt_device_audit_detail
+    where audit_id = #{auditId,jdbcType=VARCHAR}
+  </delete>
+
+</mapper>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.yxt.dao.TerminalFactoryMapper">
+  <resultMap id="BaseResultMap" type="com.java.yxt.vo.TerminalFactoryVo">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="factory_name" jdbcType="VARCHAR" property="factoryName" />
+    <result column="corporation_name" jdbcType="VARCHAR" property="corporationName" />
+    <result column="factory_phonenum" jdbcType="VARCHAR" property="factoryPhoneNum" />
+    <result column="factory_address" jdbcType="VARCHAR" property="factoryAddress" />
+    <result column="factory_status" jdbcType="SMALLINT" property="factoryStatus" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="creater_id" jdbcType="VARCHAR" property="createrId" />
+    <result column="creater_name" jdbcType="VARCHAR" property="createrName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="updater_id" jdbcType="VARCHAR" property="updaterId" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+
+
+  <insert id="insert" parameterType="com.java.yxt.vo.TerminalFactoryVo" keyProperty="id" useGeneratedKeys="true">
+    insert into mgt_terminal_factory ( id, factory_name , corporation_name , factory_phonenum,
+      factory_address ,factory_status, tenant_id, creater_id, creater_name,create_time )
+    values ( #{id,jdbcType=VARCHAR},#{factoryName,jdbcType=VARCHAR}, #{corporationName,jdbcType=VARCHAR},
+       #{factoryPhoneNum,jdbcType=VARCHAR}, #{factoryAddress,jdbcType=VARCHAR},
+      #{factoryStatus,jdbcType=SMALLINT}, #{tenantId,jdbcType=VARCHAR},  #{createrId,jdbcType=VARCHAR},
+      #{createrName,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+	
+
+
+  <update id="update" parameterType="com.java.yxt.vo.TerminalFactoryVo">
+    update mgt_terminal_factory
+    <set>
+      <if test=" factoryName !=null and factoryName !=''">
+        factory_name = #{factoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="corporationName !=null and corporationName !='' ">
+        corporation_name = #{corporationName,jdbcType=VARCHAR},
+      </if>
+      <if test="factoryPhoneNum !=null and factoryPhoneNum !=''">
+        factory_phonenum = #{factoryPhoneNum,jdbcType=VARCHAR},
+      </if>
+      <if test="factoryAddress !=null and factoryAddress !=''">
+        factory_address = #{factoryAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="factoryStatus !=null ">
+        factory_status = #{factoryStatus,jdbcType=SMALLINT},
+      </if>
+      <if test="tenantId !=null and tenantId !=''">
+        tenant_id = #{tenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="updaterId !=null and updaterId !=''">
+      updater_id = #{updaterId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime !=null ">
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+      where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+
+
+  <select id="select"  parameterType="com.java.yxt.vo.TerminalFactoryVo" resultMap="BaseResultMap">
+    select  id, factory_name , corporation_name , factory_phonenum,
+    factory_address ,factory_status, tenant_id, creater_id, creater_name,create_time, updater_id, update_time
+    from mgt_terminal_factory where 1=1
+    <if test="terminalFactoryVo.id !=null and terminalFactoryVo.id !=''">
+      and id = #{terminalDeviceVo.id,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalFactoryVo.factoryName !=null and terminalFactoryVo.factoryName !=''">
+      and factory_name like concat('%',#{terminalFactoryVo.factoryName,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="terminalFactoryVo.factoryStatus !=null ">
+      and factory_status = #{terminalFactoryVo.factoryStatus,jdbcType=SMALLINT}
+    </if>
+    order by create_time desc
+  </select>
+
+
+  <select id="selectAll" parameterType="com.java.yxt.vo.TerminalFactoryVo" resultMap="BaseResultMap">
+    select  id, factory_name , corporation_name , factory_phonenum,
+    factory_address ,factory_status, tenant_id, creater_id, creater_name,create_time, updater_id, update_time
+    from mgt_terminal_factory where 1=1
+    <if test="terminalFactoryVo.id !=null and terminalFactoryVo.id !=''">
+      and id = #{terminalDeviceVo.id,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalFactoryVo.factoryName !=null and terminalFactoryVo.factoryName !=''">
+      and factory_name like concat('%',#{terminalFactoryVo.factoryName,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="terminalFactoryVo.factoryStatus !=null ">
+      and factory_status = #{terminalFactoryVo.factoryStatus,jdbcType=SMALLINT}
+    </if>
+    order by create_time desc
+  </select>
+
+  <delete id="delete" parameterType="com.java.yxt.vo.TerminalFactoryVo">
+    delete from mgt_terminal_factory
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <select id="selectByFactoryName" parameterType="com.java.yxt.vo.TerminalFactoryVo" resultMap="BaseResultMap">
+    select  id, factory_name , corporation_name , factory_phonenum,
+    factory_address ,factory_status, tenant_id, creater_id, creater_name,create_time, updater_id, update_time
+    from mgt_terminal_factory where 1=1
+      and factory_name = #{factoryName,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectFactoryName" parameterType="com.java.yxt.vo.TerminalFactoryVo" resultMap="BaseResultMap">
+    select  id, factory_name , corporation_name , factory_phonenum,
+    factory_address ,factory_status, tenant_id, creater_id, creater_name,create_time, updater_id, update_time
+    from mgt_terminal_factory where 1=1
+    and factory_status = 1
+    <if test="factoryName !=null and factoryName !=''">
+      and factory_name like concat('%',#{factoryName,jdbcType=VARCHAR},'%')
+    </if>
+  </select>
+
+  <select id="selectById" parameterType="string" resultMap="BaseResultMap">
+    select  id, factory_name , corporation_name , factory_phonenum,
+    factory_address ,factory_status, tenant_id, creater_id, creater_name,create_time, updater_id, update_time
+    from mgt_terminal_factory where id= #{id,jdbcType=VARCHAR}
+  </select>
+
+
+</mapper>

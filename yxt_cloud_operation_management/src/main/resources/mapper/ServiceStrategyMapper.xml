@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.yxt.dao.ServiceStrategyMapper">
+  <resultMap id="BaseResultMap" type="com.java.yxt.vo.ServiceStrategyVo">
+
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="service_id" jdbcType="VARCHAR" property="serviceId" />
+    <result column="second_limit" jdbcType="INTEGER" property="secondLimit" />
+    <result column="name" jdbcType="VARCHAR" property="customerName" />
+    <result column="service_code" jdbcType="VARCHAR" property="serviceCode" />
+    <result column="day_limit" jdbcType="INTEGER" property="dayLimit" />
+    <result column="month_limit" jdbcType="INTEGER" property="monthLimit" />
+    <result column="day_from" jdbcType="VARCHAR" property="dayFrom" />
+    <result column="day_to" jdbcType="VARCHAR" property="dayTo" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="creater_id" jdbcType="VARCHAR" property="createrId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="updater_id" jdbcType="VARCHAR" property="updaterId" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+
+  <delete id="deleteByPrimaryKey" parameterType="com.java.yxt.vo.ServiceStrategyVo">
+
+    delete from mgt_service_strategy
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.java.yxt.vo.ServiceStrategyVo" useGeneratedKeys="true" keyProperty="id">
+
+    insert into mgt_service_strategy (service_id, second_limit, day_limit, 
+      month_limit, day_from, day_to, 
+      `status`, tenant_id, creater_id, 
+      create_time
+      )
+    values (#{serviceId,jdbcType=VARCHAR}, #{secondLimit,jdbcType=INTEGER}, #{dayLimit,jdbcType=INTEGER},
+      #{monthLimit,jdbcType=INTEGER}, #{dayFrom,jdbcType=VARCHAR}, #{dayTo,jdbcType=VARCHAR}, 
+      #{status,jdbcType=SMALLINT}, #{tenantId,jdbcType=VARCHAR}, #{createrId,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}
+      )
+    ON DUPLICATE KEY UPDATE
+    second_limit = values(second_limit),
+    day_limit = values(day_limit),
+    month_limit = values(month_limit),
+    day_from = values(day_from),
+    day_to = values(day_to),
+    `status` = values(`status`),
+    update_time = values(update_time),
+    updater_id = values(updater_id)
+  </insert>
+
+  <update id="update" parameterType="com.java.yxt.vo.ServiceStrategyVo">
+
+    update mgt_service_strategy
+    set
+      second_limit = #{secondLimit,jdbcType=INTEGER},
+      day_limit = #{dayLimit,jdbcType=INTEGER},
+      month_limit = #{monthLimit,jdbcType=INTEGER},
+      day_from = #{dayFrom,jdbcType=VARCHAR},
+      day_to = #{dayTo,jdbcType=VARCHAR},
+      `status` = #{status,jdbcType=SMALLINT},
+      updater_id = #{updaterId,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+
+  <update id="enableDisable" parameterType="com.java.yxt.vo.ServiceStrategyVo">
+
+    update mgt_service_strategy
+    set
+      `status` = #{status,jdbcType=SMALLINT},
+      updater_id = #{updaterId,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <select id="select"  resultMap="BaseResultMap">
+    select mss.id as id,ms.id as service_id,mc.name,mc.phone_num,ms.service_code,ifnull(mss.status,2) as status,mss.create_time
+    from mgt_service ms
+    left join mgt_customer mc on ms.customer_code = mc.customer_code
+    left join  mgt_service_strategy mss on  mss.service_id= ms.id
+    where 1=1
+    <if test="serviceStrategyVo.customerName !=null and serviceStrategyVo.customerName !=''">
+      and mc.name like concat('%',#{serviceStrategyVo.customerName,jdbcType=VARCHAR},'%')
+    </if>
+
+    <if test="serviceStrategyVo.phoneNum !=null and serviceStrategyVo.phoneNum !=''">
+      and mc.phone_num like concat('%',#{serviceStrategyVo.phoneNum,jdbcType=VARCHAR},'%')
+    </if>
+
+    <if test="serviceStrategyVo.serviceCode !=null and serviceStrategyVo.serviceCode !=''">
+      and ms.service_code like concat('%',#{serviceStrategyVo.serviceCode,jdbcType=VARCHAR},'%')
+    </if>
+
+  </select>
+
+  <select id="selectAll" parameterType="com.java.yxt.vo.ServiceStrategyVo" resultMap="BaseResultMap">
+
+    select id, service_id, second_limit, day_limit, month_limit, day_from, day_to, `status`, 
+    tenant_id, creater_id, create_time, updater_id, update_time
+    from mgt_service_strategy
+    where 1=1
+    <if test="id !=null and id !=''">
+      and id = #{id,jdbcType=VARCHAR}
+    </if>
+  </select>
+</mapper>

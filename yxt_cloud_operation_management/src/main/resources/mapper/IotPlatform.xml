@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.yxt.dao.IotPlatformMapper">
+	<sql id="Base_Column_List">
+		id,
+		server_id,
+		api_category,
+		status,
+		tenant_id,
+		creater_id,
+		create_time,
+		updater_id,
+		update_time,
+		creater_name
+
+	</sql>
+
+	<select id="selectIotPlatformList"
+		resultType="com.java.yxt.model.vo.IotPlatformVo"
+		parameterType="com.java.yxt.model.param.IotPlatformQueryParam">
+		select
+		<include refid="Base_Column_List"></include>
+		from mgt_iot_platform
+		<where>
+			delete_flag=0 
+			<if test="param.status!=null and param.status!=''">
+				and status=#{param.status}
+			</if>
+			<if test="param.apiCategory!=null and param.apiCategory!=''">
+				and api_category=#{param.apiCategory}
+			</if>
+			<if test="param.serverId!=null and param.serverId!=''">
+				and server_id like CONCAT('%', #{param.serverId}, '%') 
+			</if>
+		</where>
+		
+		order by create_time desc 
+	</select>
+</mapper>

@@ -1,0 +1,87 @@
+spring:
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: true
+        
+  #热部署生效
+  devtools:
+   restart:
+    enabled: false
+     #设置重启的目录
+    additional-paths: src/main/java
+     #classpath目录下的WEB-INF文件夹内容修改不重启
+    exclude : WEB-INF/**
+    
+#数据源
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+  shardingsphere:
+    datasource:
+      mgt:
+        driver-class-name: com.mysql.jdbc.Driver
+        password: 123456
+        type: com.alibaba.druid.pool.DruidDataSource
+        url: jdbc:mysql://192.168.10.90:3306/mgt?useUnicode=true&characterEncoding=utf-8&useSSL=false
+        username: root
+        names: mgt
+      props:
+        sql:
+          show: true
+
+#默认log4j2.xml
+logging:
+  level:
+    com.java.yxt.dao: debug
+  config: classpath:log4j2-dev.xml
+
+#redis配置
+redis:
+  address:
+    enable: true
+    singleAddress: redis://192.168.10.90:6379
+    clusterAddress: 
+    masterAddress:
+    slaveAddress:
+    username:
+    password:    
+    database: 1
+#rocketMQ配置
+rocketmq:
+  producer: #生产者配置
+    isOnOff: true #是否开启配置 true开启，否则关闭
+    groupName: operation_management_group #组名
+    namesrvAddr: 192.168.10.90:9876 #地址
+    retryTimesWhenSendFailed: 2 #发送失败重试次数
+  consumer: #消费者配置
+    isOnOff: false #是否开启配置 true开启，否则关闭
+    groupName: shortdata_ability_consumer_group
+    namesrvAddr: 192.168.10.90:9876 #地址
+    topics: SHORTDATA_TOPIC~NOMAL_REPORT_TAG #上报topic
+    consumeMessageBatchMaxSize: 1 #批量消费数量
+    
+#feign参数设置
+feign:
+  hystrix:
+    enabled: true
+  client:
+    config:
+      default:
+        connectTimeout: 2000
+        readTimeout: 10000
+
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 600000
+          strategy: SEMAPHORE #采用信号量隔离策略，否则请求头无法传入值
+
+mybatis:
+  config-location: classpath:mybatis/mybatis-config.xml
+  mapper-locations: classpath:mybatis/mapper/*.xml,classpath:mapper/*.xml
+

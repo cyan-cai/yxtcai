@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.yxt.dao.TerminalDeviceMapper">
+  <resultMap id="BaseResultMap" type="com.java.yxt.vo.TerminalDeviceVo">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="imei" jdbcType="VARCHAR" property="imei" />
+    <result column="type" jdbcType="SMALLINT" property="type" />
+    <result column="terminal_factory" jdbcType="VARCHAR" property="terminalFactory" />
+    <result column="model" jdbcType="VARCHAR" property="model" />
+    <result column="meid" jdbcType="VARCHAR" property="meid" />
+    <result column="audit_status" jdbcType="SMALLINT" property="auditStatus" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="creater_id" jdbcType="VARCHAR" property="createrId" />
+    <result column="creater_name" jdbcType="VARCHAR" property="createrName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="updater_id" jdbcType="VARCHAR" property="updaterId" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+
+
+  <insert id="insert" parameterType="com.java.yxt.vo.TerminalDeviceVo" keyProperty="id" useGeneratedKeys="true">
+    insert into mgt_terminal_device (imei, `type`, terminal_factory , model,
+      meid , audit_status , tenant_id, creater_id, creater_name,create_time,`status` )
+    values (#{imei,jdbcType=VARCHAR}, #{type,jdbcType=SMALLINT},
+    #{terminalFactory,jdbcType=VARCHAR}, #{model,jdbcType=VARCHAR},
+      #{meid,jdbcType=VARCHAR}, #{auditStatus,jdbcType=SMALLINT},  #{tenantId,jdbcType=VARCHAR},
+      #{createrId,jdbcType=VARCHAR},#{createrName,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},
+      #{status,jdbcType=SMALLINT}
+      )
+      ON DUPLICATE KEY UPDATE
+      `type` = values(`type`),
+       terminal_factory = values(terminal_factory),
+       model = values(model)
+  </insert>
+
+  <insert id="insertBatch" parameterType="java.util.List">
+    insert into mgt_terminal_device (imei, `type`, terminal_factory , model,
+    meid , audit_status , tenant_id, creater_id, creater_name,create_time,`status` ) VALUES
+    <foreach collection="list" item="item" separator=",">
+      (#{item.imei,jdbcType=VARCHAR}, #{item.type,jdbcType=SMALLINT},
+      #{item.terminalFactory,jdbcType=VARCHAR}, #{item.model,jdbcType=VARCHAR},
+      #{item.meid,jdbcType=VARCHAR}, #{item.auditStatus,jdbcType=SMALLINT},  #{item.tenantId,jdbcType=VARCHAR},
+      #{item.createrId,jdbcType=VARCHAR},#{item.createrName,jdbcType=VARCHAR},#{item.createTime,jdbcType=TIMESTAMP},
+      #{item.status,jdbcType=SMALLINT}
+      )
+    </foreach>
+    ON DUPLICATE KEY UPDATE
+    `type` = values(`type`),
+    terminal_factory = values(terminal_factory),
+    model = values(model)
+  </insert>
+
+
+	
+	<insert id="insertupload" parameterType="com.java.yxt.vo.TerminalDeviceVo" keyProperty="id" useGeneratedKeys="true">
+   insert into mgt_terminal_device (imei, `type`, terminal_factory , model,
+      meid , audit_status , tenant_id, creater_id, creater_name,create_time,`status` )
+    values (#{imei,jdbcType=VARCHAR}, #{type,jdbcType=SMALLINT},
+     #{terminalFactory,jdbcType=VARCHAR},#{model,jdbcType=VARCHAR},
+      #{meid,jdbcType=VARCHAR}, #{auditStatus,jdbcType=SMALLINT},  #{tenantId,jdbcType=VARCHAR},
+      #{createrId,jdbcType=VARCHAR},#{createrName,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},
+      #{status,jdbcType=SMALLINT}
+      )
+      ON DUPLICATE KEY UPDATE
+      `type` = values(`type`),
+       terminal_factory = values(terminal_factory),
+       model = values(model)
+  </insert>
+	
+
+
+  <update id="update" parameterType="com.java.yxt.vo.TerminalDeviceVo">
+    update mgt_terminal_device
+    <set>
+      <if test=" imei !=null and imei !=''">
+        imei = #{imei,jdbcType=VARCHAR},
+      </if>
+      <if test="type !=null ">
+        `type` = #{type,jdbcType=SMALLINT},
+      </if>
+      <if test="terminalFactory !=null and terminalFactory !=''">
+        terminal_factory = #{terminalFactory,jdbcType=VARCHAR},
+      </if>
+      <if test="model !=null and model !=''">
+        model = #{model,jdbcType=VARCHAR},
+      </if>
+      <if test="meid !=null and type !=''">
+        meid = #{meid,jdbcType=VARCHAR},
+      </if>
+      <if test="auditStatus !=null">
+        audit_status = #{auditStatus,jdbcType=SMALLINT},
+      </if>
+      <if test="tenantId !=null and tenantId !=''">
+        tenant_id = #{tenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="updaterId !=null and updaterId !=''">
+      updater_id = #{updaterId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime !=null ">
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+      where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateBatch"  parameterType="java.util.List">
+    insert into mgt_terminal_device (id,audit_status) values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.id,jdbcType=VARCHAR}, 2)
+    </foreach>
+    ON DUPLICATE KEY UPDATE
+    audit_status = values(audit_status)
+  </update>
+
+  <select id="select"  parameterType="com.java.yxt.vo.TerminalDeviceVo" resultMap="BaseResultMap">
+    select  mtd.id, mtd.imei, mtd.`type`, mtd.terminal_factory , mtd.model,
+    mtd.meid , mtd.audit_status , mtd.tenant_id, mtd.creater_id, mtd.creater_name,mtd.create_time, mtd.updater_id, mtd.update_time
+    from mgt_terminal_device mtd join mgt_terminal_factory mtf where 1=1 and mtd.`status`= 1
+    and mtd.terminal_factory = mtf.factory_name
+    and mtf.factory_status = 1
+    <if test="terminalDeviceVo.id !=null and terminalDeviceVo.id !=''">
+      and mtd.id = #{terminalDeviceVo.id,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalDeviceVo.imei !=null and terminalDeviceVo.imei !=''">
+      and mtd.imei like concat('%',#{terminalDeviceVo.imei,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="terminalDeviceVo.type !=null ">
+      and mtd.`type` =#{terminalDeviceVo.type,jdbcType=SMALLINT}
+    </if>
+    <if test="terminalDeviceVo.terminalFactory !=null and terminalDeviceVo.terminalFactory !=''">
+      and  mtd.terminal_factory like concat('%', #{terminalDeviceVo.terminalFactory,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="terminalDeviceVo.model !=null and terminalDeviceVo.model !=''">
+      and  mtd.model like concat('%', #{terminalDeviceVo.model,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="terminalDeviceVo.meid !=null and terminalDeviceVo.meid !=''">
+      and  mtd.meid like concat('%', #{terminalDeviceVo.meid,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="terminalDeviceVo.auditStatus !=null ">
+      and  mtd.audit_status = #{terminalDeviceVo.auditStatus,jdbcType=SMALLINT}
+    </if>
+    <if test="terminalDeviceVo.createrName !=null and terminalDeviceVo.createrName !=''">
+      and  mtd.creater_name like concat('%', #{terminalDeviceVo.createrName},'%')
+    </if>
+    <if test="terminalDeviceVo.createBeginTime !=null">
+      and mtd.create_time >= #{terminalDeviceVo.createBeginTime,jdbcType=TIMESTAMP}
+    </if>
+    <if test="terminalDeviceVo.createEndTime !=null">
+      and mtd.create_time  &lt;= #{terminalDeviceVo.createEndTime,jdbcType=TIMESTAMP}
+    </if>
+  </select>
+
+
+  <select id="selectAll"  parameterType="com.java.yxt.vo.TerminalDeviceVo" resultMap="BaseResultMap">
+    select  mtd.id, mtd.imei, mtd.`type`, mtd.terminal_factory , mtd.model,
+    mtd.meid , mtd.audit_status , mtd.tenant_id, mtd.creater_id, mtd.creater_name,mtd.create_time, mtd.updater_id, mtd.update_time
+    from mgt_terminal_device mtd join mgt_terminal_factory mtf where 1=1 and mtd.`status`= 1
+    and mtd.terminal_factory = mtf.factory_name
+    and mtf.factory_status = 1
+    <if test="terminalDeviceVo.id !=null and terminalDeviceVo.id !=''">
+      and mtd.id = #{terminalDeviceVo.id,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalDeviceVo.imei !=null and terminalDeviceVo.imei !=''">
+      and mtd.imei like concat('%',#{terminalDeviceVo.imei,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="terminalDeviceVo.type !=null ">
+      and mtd.`type` =#{terminalDeviceVo.type,jdbcType=SMALLINT}
+    </if>
+    <if test="terminalDeviceVo.terminalFactory !=null and terminalDeviceVo.terminalFactory !=''">
+      and  mtd.terminal_factory like concat('%', #{terminalDeviceVo.terminalFactory,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="terminalDeviceVo.model !=null and terminalDeviceVo.model !=''">
+      and  mtd.model like concat('%', #{terminalDeviceVo.model,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="terminalDeviceVo.meid !=null and terminalDeviceVo.meid !=''">
+      and  mtd.meid like concat('%', #{terminalDeviceVo.meid,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="terminalDeviceVo.auditStatus !=null ">
+      and  mtd.audit_status = #{terminalDeviceVo.auditStatus,jdbcType=SMALLINT}
+    </if>
+    <if test="terminalDeviceVo.createrName !=null and terminalDeviceVo.createrName !=''">
+      and  mtd.creater_name like concat('%', #{terminalDeviceVo.createrName},'%')
+    </if>
+    <if test="terminalDeviceVo.createBeginTime !=null">
+      and mtd.create_time >= #{terminalDeviceVo.createBeginTime,jdbcType=TIMESTAMP}
+    </if>
+    <if test="terminalDeviceVo.createEndTime !=null">
+      and mtd.create_time  &lt;= #{terminalDeviceVo.createEndTime,jdbcType=TIMESTAMP}
+    </if>
+    order by mtd.create_time desc
+  </select>
+
+  <delete id="delete" parameterType="com.java.yxt.vo.TerminalDeviceVo">
+    delete from mgt_terminal_device
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <update id="updateStatus" parameterType="com.java.yxt.vo.TerminalDeviceVo">
+    update mgt_terminal_device
+    set `status`= 0
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <select id="selectByIMEI" parameterType="com.java.yxt.vo.TerminalDeviceVo" resultMap="BaseResultMap">
+  select  id, imei, `type`, terminal_factory , model,
+  meid , audit_status , tenant_id, creater_id, creater_name,create_time, updater_id, update_time
+  from mgt_terminal_device where 1=1
+  and imei = #{imei,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByMEID" parameterType="com.java.yxt.vo.TerminalDeviceVo" resultMap="BaseResultMap">
+  select  id, imei, `type`, terminal_factory , model,
+  meid , audit_status , tenant_id, creater_id, creater_name,create_time, updater_id, update_time
+  from mgt_terminal_device where 1=1
+  and meid = #{meid,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByIMEIAndMEID" parameterType="com.java.yxt.vo.TerminalDeviceVo" resultMap="BaseResultMap">
+  select  id, imei, `type`, terminal_factory , model,
+  meid , audit_status , tenant_id, creater_id, creater_name,create_time, updater_id, update_time
+  from mgt_terminal_device where 1=1
+  and imei = #{imei,jdbcType=VARCHAR}
+  and meid = #{meid,jdbcType=VARCHAR}
+  </select>
+</mapper>

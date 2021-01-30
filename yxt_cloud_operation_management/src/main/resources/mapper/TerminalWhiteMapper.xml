@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.yxt.dao.TerminalWhiteMapper">
+
+  <resultMap id="BaseResultMap" type="com.java.yxt.vo.TerminalWhiteVo">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="service_code" jdbcType="VARCHAR" property="serviceCode" />
+    <result column="terminal_id" jdbcType="VARCHAR" property="terminalId" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="creater_id" jdbcType="VARCHAR" property="createrId" />
+    <result column="creater_name" jdbcType="VARCHAR" property="createrName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="updater_id" jdbcType="VARCHAR" property="updaterId" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+
+  <delete id="delete" parameterType="com.java.yxt.vo.TerminalWhiteVo">
+    delete from mgt_terminal_white
+    where terminal_id = #{terminalId,jdbcType=VARCHAR}
+  </delete>
+
+
+  <insert id="insert" parameterType="com.java.yxt.vo.TerminalWhiteVo" useGeneratedKeys="true" keyProperty="id">
+
+    insert into mgt_terminal_white (service_code, terminal_id, `status`,
+      tenant_id, creater_id, create_time,creater_name,update_time)
+    values
+    <foreach collection="serviceCodes" item="item" index="index" separator=",">
+      (#{item,jdbcType=VARCHAR}, #{terminalId,jdbcType=VARCHAR},
+      #{status,jdbcType=SMALLINT},
+      #{tenantId,jdbcType=VARCHAR}, #{createrId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+      #{createrName,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP})
+    </foreach>
+    ON DUPLICATE KEY UPDATE
+    `status` = values(`status`),
+    service_Code = values(service_Code),
+    updater_id = values(updater_id),
+    creater_id = values(creater_id),
+    update_time = values(update_time)
+  </insert>
+
+  <insert id="insertList" parameterType="java.util.List" >
+
+    insert into mgt_terminal_white (service_code, terminal_id, `status`,
+    tenant_id, creater_id, create_time,creater_name,update_time)
+    values
+    <foreach collection="list" separator="," index="index" item="item">
+      (#{item.serviceCode,jdbcType=VARCHAR}, #{item.terminalId,jdbcType=VARCHAR},
+      #{item.status,jdbcType=SMALLINT},
+      #{item.tenantId,jdbcType=VARCHAR}, #{item.createrId,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP},
+      #{item.createrName,jdbcType=VARCHAR}, #{item.updateTime,jdbcType=TIMESTAMP})
+    </foreach>
+  </insert>
+
+  <update id="update" parameterType="com.java.yxt.vo.TerminalWhiteVo">
+    update mgt_terminal_white
+    set service_code = #{serviceCode,jdbcType=VARCHAR},
+      `status` = #{status,jdbcType=SMALLINT},
+      updater_id = #{updaterId,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+<select id="isTerminalServiceCodeExists" parameterType="com.java.yxt.vo.TerminalWhiteVo" resultType="com.java.yxt.vo.TerminalWhiteVo">
+  select id,service_code,terminal_id from mgt_terminal_white
+  where service_code in
+  <foreach collection="serviceCodes" index="index" item="item" separator="," open="(" close=")">
+    #{item}
+  </foreach>
+  and terminal_id = #{terminalId,jdbcType=VARCHAR}
+</select>
+
+
+  <select id="select" parameterType="com.java.yxt.vo.TerminalWhiteVo" resultType="com.java.yxt.vo.TerminalWhiteVo">
+    select c.id, msisdn, a.`type`, user_status as userStatus, a.customer_id as customerId,b.customer_code as customerCode,
+    c.`status`, c.creater_id,c.creater_name, c.create_time as createTime,c.terminal_id as terminalId,
+    b.name as customerName,c.service_code as serviceCode,c.creater_name as createrName
+    from mgt_terminal_white c
+    left  join mgt_terminal a on c.terminal_id=a.id
+    left  join mgt_customer b on a.customer_id = b.id
+    left  join mgt_service d on c.service_code=d.service_code
+    where
+    a.user_status = '1' and b.`status`=1
+    and d.start_time &lt;= now()
+    and d.end_time >= now()
+    <if test="terminalWhiteVo.msisdn !=null and terminalWhiteVo.msisdn !=''">
+     and a.msisdn like concat('%', #{terminalWhiteVo.msisdn},'%')
+    </if>
+    <if test="terminalWhiteVo.customerCode !=null and terminalWhiteVo.customerCode !=''">
+      and b.customer_code =#{terminalWhiteVo.customerCode,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalWhiteVo.customerName !=null and terminalWhiteVo.customerName !=''">
+      and b.name like concat('%', #{terminalWhiteVo.customerName},'%')
+    </if>
+
+    <if test="terminalWhiteVo.serviceCode !=null and terminalWhiteVo.serviceCode !=''">
+      and c.service_code like concat('%', #{terminalWhiteVo.serviceCode},'%')
+    </if>
+
+    <if test="terminalWhiteVo.type !=null and terminalWhiteVo.type !=''">
+      and  a.`type` = #{terminalWhiteVo.type}
+    </if>
+
+    <if test="terminalWhiteVo.status !=null">
+      and  c.status = #{terminalWhiteVo.status}
+    </if>
+
+    <if test="terminalWhiteVo.createBeginTime !=null and terminalWhiteVo.createBeginTime !=''">
+      and  c.create_time >= #{terminalWhiteVo.createBeginTime}
+    </if>
+
+    <if test="terminalWhiteVo.createEndTime !=null and terminalWhiteVo.createEndTime !=''">
+      and  c.create_time &lt;= #{terminalWhiteVo.createEndTime}
+    </if>
+
+    <if test="terminalWhiteVo.createrName !=null and terminalWhiteVo.createrName !=''">
+      and  c.creater_name like concat('%', #{terminalWhiteVo.createrName},'%')
+    </if>
+
+  </select>
+
+
+  <select id="selectAll" parameterType="com.java.yxt.vo.TerminalWhiteVo" resultType="com.java.yxt.vo.TerminalWhiteVo">
+    select c.id, msisdn, a.`type`, user_status as userStatus, a.customer_id as customerId,b.customer_code as customerCode,
+    c.`status`, c.creater_id,c.creater_name, c.create_time as createTime,c.terminal_id as terminalId,
+    b.name as customerName,c.service_code as serviceCode,c.creater_name as createrName
+    from mgt_terminal_white c
+    left  join mgt_terminal a on c.terminal_id=a.id
+    left  join mgt_customer b on a.customer_id = b.id
+    left  join mgt_service d on c.service_code=d.service_code
+    where
+    a.user_status = '1' and b.`status`=1
+    and d.start_time &lt;= now()
+    and d.end_time >= now()
+    <if test="terminalWhiteVo.msisdn !=null and terminalWhiteVo.msisdn !=''">
+      and a.msisdn like concat('%', #{terminalWhiteVo.msisdn},'%')
+    </if>
+    <if test="terminalWhiteVo.customerCode !=null and terminalWhiteVo.customerCode !=''">
+      and b.customer_code =#{terminalWhiteVo.customerCode,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalWhiteVo.customerName !=null and terminalWhiteVo.customerName !=''">
+      and b.name like concat('%', #{terminalWhiteVo.customerName},'%')
+    </if>
+
+    <if test="terminalWhiteVo.serviceCode !=null and terminalWhiteVo.serviceCode !=''">
+      and c.service_code like concat('%', #{terminalWhiteVo.serviceCode},'%')
+    </if>
+
+    <if test="terminalWhiteVo.type !=null and terminalWhiteVo.type !=''">
+      and  a.`type` = #{terminalWhiteVo.type}
+    </if>
+
+    <if test="terminalWhiteVo.status !=null">
+      and  c.status = #{terminalWhiteVo.status}
+    </if>
+
+    <if test="terminalWhiteVo.createBeginTime !=null and terminalWhiteVo.createBeginTime !=''">
+      and  c.create_time >= #{terminalWhiteVo.createBeginTime}
+    </if>
+
+    <if test="terminalWhiteVo.createEndTime !=null and terminalWhiteVo.createEndTime !=''">
+      and  c.create_time &lt;= #{terminalWhiteVo.createEndTime}
+    </if>
+
+    <if test="terminalWhiteVo.createrName !=null and terminalWhiteVo.createrName !=''">
+      and  c.creater_name like concat('%', #{terminalWhiteVo.createrName},'%')
+    </if>
+    order by  c.create_time desc
+  </select>
+
+  <select id="terminalWhiteInfo"  resultType="com.java.yxt.vo.TerminalWhiteVo">
+        select  mt.msisdn,ms.start_time,ms.end_time
+        from mgt_terminal_white mtw
+        left join  mgt_terminal mt on mtw.terminal_id = mt.id
+        left join mgt_service ms on ms.service_code = mtw.service_code
+        where mt.user_status = 1
+        and mtw.status=1
+        <if test="terminalWhiteVo.serviceCode !=null and terminalWhiteVo.serviceCode !=''">
+          and mtw.service_code= #{terminalWhiteVo.serviceCode,jdbcType=VARCHAR}
+        </if>
+
+  </select>
+
+</mapper>

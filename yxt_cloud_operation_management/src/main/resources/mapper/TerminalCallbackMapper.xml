@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.yxt.dao.TerminalCallbackMapper">
+  <resultMap id="BaseResultMap" type="com.java.yxt.vo.TerminalCallbackVo">
+
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="terminal_id" jdbcType="VARCHAR" property="terminalId" />
+    <result column="api_category" jdbcType="VARCHAR" property="apiCategory" />
+    <result column="service_id" jdbcType="VARCHAR" property="serviceId" />
+    <result column="msisdn" jdbcType="VARCHAR" property="msisdn" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="creater_id" jdbcType="VARCHAR" property="createrId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="updater_id" jdbcType="VARCHAR" property="updaterId" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+
+  <delete id="delete" parameterType="com.java.yxt.vo.TerminalCallbackVo">
+    delete from mgt_terminal_callback_service
+    where terminal_id = #{terminalId,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.java.yxt.vo.TerminalCallbackVo" useGeneratedKeys="true" keyProperty="id">
+
+    insert into mgt_terminal_callback_service (terminal_id, api_category, service_id, 
+      `status`, tenant_id, creater_id, update_time,updater_id,
+      create_time
+      )
+    values
+    <foreach collection="apiCategoryList" item="item" index="index" separator=",">
+      (#{terminalId,jdbcType=VARCHAR}, #{item,jdbcType=VARCHAR}, #{serviceId,jdbcType=VARCHAR},
+      #{status,jdbcType=SMALLINT}, #{tenantId,jdbcType=VARCHAR}, #{createrId,jdbcType=VARCHAR},
+      #{updateTime,jdbcType=TIMESTAMP},#{updaterId,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP}
+      )
+    </foreach>
+    ON DUPLICATE KEY UPDATE
+    `status` = values(`status`),
+    update_time = values(update_time),
+    updater_id = values(updater_id)
+  </insert>
+
+  <update id="update" parameterType="com.java.yxt.vo.TerminalCallbackVo">
+
+    update mgt_terminal_callback_service
+    set
+    <if test="terminalId !=null and terminalId !=''">
+      terminal_id = #{terminalId,jdbcType=VARCHAR},
+    </if>
+    <if test="apiCategory !=null and apiCategory !=''">
+      api_category = #{apiCategory,jdbcType=VARCHAR},
+    </if>
+    <if test="status !=null">
+      `status` = #{status,jdbcType=SMALLINT},
+    </if>
+      updater_id = #{updaterId,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    <where>
+      <if test="serviceId !=null and serviceId !=''">
+        service_id = #{serviceId,jdbcType=VARCHAR}
+      </if>
+      <if test="terminalId !=null and terminalId !=''">
+       and terminal_id = #{terminalId,jdbcType=VARCHAR}
+      </if>
+      <if test="id !=null and id !=''">
+       and id = #{id,jdbcType=VARCHAR}
+      </if>
+    </where>
+
+  </update>
+
+  <update id="updateByServiceAndTerminalId" parameterType="com.java.yxt.vo.TerminalCallbackVo">
+
+    update mgt_terminal_callback_service
+    set
+    <if test="status">
+      `status` = #{status,jdbcType=SMALLINT},
+    </if>
+    updater_id = #{updaterId,jdbcType=VARCHAR},
+    update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where
+    service_id = #{serviceId,jdbcType=VARCHAR}
+    and
+    terminal_id = #{terminalId,jdbcType=VARCHAR}
+  </update>
+
+
+
+  <select id="select" parameterType="com.java.yxt.vo.TerminalCallbackVo" resultMap="BaseResultMap">
+
+    select id, terminal_id, api_category, service_id, `status`, tenant_id, creater_id,
+    create_time, updater_id, update_time
+    from mgt_terminal_callback_service
+    where 1=1
+    <if test="terminalCallbackVo.id !=null and terminalCallbackVo.id !=''">
+      and id = #{terminalCallbackVo.id,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalCallbackVo.terminalId !=null and terminalCallbackVo.terminalId !=''">
+      and  terminal_id = #{terminalCallbackVo.terminalId,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalCallbackVo.apiCategory !=null and terminalCallbackVo.apiCategory !=''">
+      and  api_category = #{terminalCallbackVo.apiCategory,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalCallbackVo.status !=null">
+      and  `status` = #{terminalCallbackVo.status,jdbcType=VARCHAR}
+    </if>
+  </select>
+
+  <select id="selectAll" parameterType="com.java.yxt.vo.TerminalCallbackVo" resultMap="BaseResultMap">
+    select a.id, a.terminal_id, b.msisdn,a.api_category, a.service_id, a.`status`, a.tenant_id, a.creater_id,
+    a.create_time, a.updater_id, a.update_time
+    from mgt_terminal b
+    left join mgt_terminal_callback_service a on a.terminal_id = b.id
+    <where>
+      b.user_status = 1
+      <if test="id !=null">
+       and  a.id = #{id,jdbcType=VARCHAR}
+      </if>
+      <if test="msisdnList !=null">
+        and b.msisdn in
+        <foreach collection="msisdnList" item="item" index="index" open="(" close=")" separator=",">
+          #{item}
+        </foreach>
+      </if>
+
+      <if test="apiCategory !=null and apiCategory !=''">
+        and a.api_category = #{apiCategory,jdbcType=VARCHAR}
+      </if>
+      <if test="status !=null">
+        and a.status = #{status,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+
+
+  <select id="getCallbackUrlByCusCodeApiCategory" parameterType="com.java.yxt.vo.TerminalCallbackVo" resultType="map">
+    select ms.id as serviceId,ms.customer_code as customerCode,ms.callback_url as callbackUrl,ms.service_code as serviceCode
+    from mgt_service ms
+    where ms.start_time &lt; now() and ms.end_time > now()
+    and ms.service_type = #{apiCategory,jdbcType=VARCHAR}
+    and ms.customer_code = #{customerCode,jdbcType=VARCHAR}
+    limit 1
+  </select>
+
+
+  <select id="getRelationCallbackTerminal" parameterType="com.java.yxt.vo.TerminalCallbackVo" resultMap="BaseResultMap">
+  select a.id, a.terminal_id, b.msisdn,a.api_category, a.service_id, a.`status`, a.tenant_id, a.creater_id,
+  a.create_time, a.updater_id, a.update_time
+  from mgt_terminal b, mgt_terminal_callback_service a
+  <where>
+     a.terminal_id = b.id
+     and b.user_status = 1
+     and a.status = 1
+    <if test="id !=null">
+     and a.id = #{id,jdbcType=VARCHAR}
+    </if>
+    <if test="serviceIds !=null and serviceIds.size()>0">
+      and a.service_id in
+      <foreach collection="serviceIds" item="item" index="index" open="(" close=")" separator=",">
+        #{item}
+      </foreach>
+    </if>
+
+    <if test="apiCategory !=null and apiCategory !=''">
+      and a.api_category = #{apiCategory,jdbcType=VARCHAR}
+    </if>
+  </where>
+  </select>
+</mapper>

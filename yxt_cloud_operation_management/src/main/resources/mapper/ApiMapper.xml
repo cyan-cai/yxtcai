@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.yxt.dao.ApiMapper">
+
+  <resultMap id="BaseResultMap" type="com.java.yxt.vo.ApiVo">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="catalogName" jdbcType="VARCHAR" property="catalogName" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="api_program_name" jdbcType="VARCHAR" property="apiProgramName" />
+    <result column="api_catalog_id" jdbcType="VARCHAR" property="apiCatalogId" />
+    <result column="extro_path" jdbcType="VARCHAR" property="extroPath" />
+    <result column="internal_path" jdbcType="VARCHAR" property="internalPath" />
+    <result column="micro_name" jdbcType="VARCHAR" property="microName" />
+    <result column="micro_program_name" jdbcType="VARCHAR" property="microProgramName" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="creater_id" jdbcType="VARCHAR" property="createrId" />
+    <result column="creater_name" jdbcType="VARCHAR" property="createrName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="updater_id" jdbcType="VARCHAR" property="updaterId" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="api_category" jdbcType="VARCHAR" property="apiCategory" />
+  </resultMap>
+
+  <delete id="delete">
+    delete from mgt_api
+    where id =  #{id,jdbcType=VARCHAR}
+
+  </delete>
+
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id"  keyColumn="id" parameterType="com.java.yxt.vo.ApiVo">
+
+    insert into mgt_api (`name`,url, description, api_program_name,
+      extro_path, internal_path, micro_name, 
+      micro_program_name, `status`, tenant_id, 
+      creater_id,creater_name, create_time, api_category)
+    values (#{name,jdbcType=VARCHAR},#{url,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
+      #{apiProgramName,jdbcType=VARCHAR},
+      #{extroPath,jdbcType=VARCHAR}, #{internalPath,jdbcType=VARCHAR}, #{microName,jdbcType=VARCHAR}, 
+      #{microProgramName,jdbcType=VARCHAR}, #{status,jdbcType=SMALLINT}, #{tenantId,jdbcType=VARCHAR}, 
+      #{createrId,jdbcType=VARCHAR},  #{createrName,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},
+      #{apiCategory,jdbcType=VARCHAR})
+
+  </insert>
+
+  <update id="update" parameterType="com.java.yxt.vo.ApiVo">
+
+    update mgt_api
+    <set>
+      <if test="name !=null and name !=''">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+        description = #{description,jdbcType=VARCHAR},
+      <if test="apiProgramName !=null and apiProgramName !=''">
+        api_program_name = #{apiProgramName,jdbcType=VARCHAR},
+      </if>
+      <if test="apiCategory !=null and apiCategory !=''">
+        api_category = #{apiCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="microName !=null and microName !=''">
+        micro_name = #{microName,jdbcType=VARCHAR},
+      </if>
+      <if test="microProgramName !=null and microProgramName !=''">
+        micro_program_name = #{microProgramName,jdbcType=VARCHAR},
+      </if>
+        `status` = #{status,jdbcType=SMALLINT},
+      <if test="extroPath != null and extroPath !=''">
+        extro_path = #{extroPath,jdbcType=VARCHAR},
+      </if>
+      <if test="internalPath != null and internalPath !=''">
+        internal_path = #{internalPath,jdbcType=VARCHAR},
+      </if>
+      <if test="updaterId != null and updaterId !=''">
+        updater_id = #{updaterId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null ">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+
+  </update>
+
+
+
+  <select id="selectByContion"  resultMap="BaseResultMap">
+
+    select ma.id, ma.`name`, ma.description, ma.extro_path,ma.internal_path,ma.api_program_name,ma.micro_name,ma.micro_program_name,
+    ma.`status`, ma.creater_id,ma.creater_name, ma.create_time,ma.api_category
+    from mgt_api ma
+    <where>
+      <if test="apiVo.name != null and apiVo.name !=''">
+         ma.`name` = #{apiVo.name,jdbcType=VARCHAR}
+      </if>
+      <if test="apiVo.id != null and apiVo.id !=''">
+        and ma.id = #{apiVo.id,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+
+  <select id="select"  resultMap="BaseResultMap">
+
+    select ma.id, ma.`name`, ma.description, ma.extro_path,ma.internal_path,ma.api_program_name,ma.micro_name,ma.micro_program_name,
+    ma.`status`, ma.creater_id,ma.creater_name, ma.create_time,ma.api_category,mac.name as catalogName
+    from mgt_api ma   left join mgt_api_relation_catalog  marc on  ma.id=marc.api_id left join mgt_api_catalog mac on marc.api_catalog_id = mac.id
+	<where>
+		1=1
+	    <if test="apiVo.name != null and apiVo.name !=''">
+	      and ma.`name` like concat('%', #{apiVo.name,jdbcType=VARCHAR} , '%')
+	    </if>
+	    <if test="apiVo.apiCategory != null and apiVo.apiCategory !=''">
+	      and ma.api_category like concat('%', #{apiVo.apiCategory,jdbcType=VARCHAR}, '%')
+	    </if>
+      <if test="apiVo.createrName != null and apiVo.createrName !=''">
+        and ma.creater_name like concat('%', #{apiVo.createrName,jdbcType=VARCHAR}, '%')
+      </if>
+    </where>
+  </select>
+
+
+  <select id="selectAll" parameterType="com.java.yxt.vo.ApiVo" resultMap="BaseResultMap">
+
+    select id, `name`, description, api_program_name, extro_path, internal_path, micro_name,
+    micro_program_name, `status`, tenant_id, creater_id, create_time, updater_id, update_time,
+    api_category
+    from mgt_api  where 1=1
+    <if test="name != null and name !=''">
+      and `name` like concat('%', #{name,jdbcType=VARCHAR} , '%')
+    </if>
+    <if test="apiCategory != null and apiCategory !=''">
+      and api_category like concat('%', #{apiCategory,jdbcType=VARCHAR}, '%')
+    </if>
+    order by create_time desc
+  </select>
+
+
+  <select id="selectAllUnRelation" parameterType="com.java.yxt.vo.ApiVo" resultMap="BaseResultMap">
+
+    select id, `name`, description, api_program_name, extro_path, internal_path, micro_name,
+    micro_program_name, `status`, tenant_id, creater_id, create_time, updater_id, update_time,
+    api_category
+    from mgt_api ma where
+    not EXISTS (select 1 from mgt_production_api_relation mpar
+    where ma.id=mpar.api_id and mpar.product_id=#{productId,jdbcType=VARCHAR}
+    )
+    <if test="name != null and name !=''">
+      and ma.`name` like concat('%',#{name,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="apiCategory != null and apiCategory !=''">
+      and ma.api_category = #{apiCategory,jdbcType=VARCHAR}
+    </if>
+    <if test="status != null and status !=''">
+      and ma.status = #{status,jdbcType=INTEGER}
+    </if>
+    order by ma.create_time desc
+  </select>
+
+  <select id="unAttachApiSelect" resultMap="BaseResultMap">
+
+    select id, `name`, description, api_program_name, extro_path, internal_path, micro_name,
+    micro_program_name, `status`, tenant_id, creater_id, create_time, updater_id, update_time,
+    api_category,creater_name
+    from mgt_api a where NOT EXISTS(
+    select 1 from mgt_api_relation_catalog marc
+    where a.id = marc.api_id
+    )
+    <if test="apiVo.name != null and apiVo.name !=''">
+      and a.`name` like concat('%', #{apiVo.name,jdbcType=VARCHAR} ,'%')
+    </if>
+    <if test="apiVo.apiCategory != null and apiVo.apiCategory !=''">
+      and a.api_category like concat('%', #{apiVo.apiCategory,jdbcType=VARCHAR}, '%')
+    </if>
+    and a.status = 1
+  </select>
+
+  <select id="attachedApiSelect" resultMap="BaseResultMap">
+
+    select id, `name`, description, api_program_name, extro_path, internal_path, micro_name,
+    micro_program_name, `status`, tenant_id, creater_id, create_time, updater_id, update_time,
+    api_category,creater_name
+    from mgt_api a  where EXISTS(
+      select 1 from mgt_api_relation_catalog marc
+      where a.id = marc.api_id and marc.api_catalog_id = #{apiVo.apiCatalogId,jdbcType=VARCHAR}
+    )
+    <if test="apiVo.name != null and apiVo.name !=''">
+      and a.`name` like concat('%' , #{apiVo.name,jdbcType=VARCHAR} ,'%')
+    </if>
+    <if test="apiVo.apiCategory != null and apiVo.apiCategory !=''">
+      and a.api_category like concat('%' , #{apiVo.apiCategory,jdbcType=VARCHAR} , '%')
+    </if>
+  </select>
+
+  <select id="selectBySaleCode"  resultMap="BaseResultMap">
+    select ma.id, ma.`name`, ma.description, ma.extro_path,ma.internal_path,ma.api_program_name,ma.micro_name,ma.micro_program_name,
+    ma.`status`, ma.creater_id,ma.creater_name, ma.create_time,ma.api_category
+    from mgt_api ma ,mgt_production_api_relation mpa,mgt_production mp
+    where ma.id=mpa.api_id
+    and mpa.product_id=mp.id
+    and mp.sale_code=#{productId,jdbcType=VARCHAR}
+  </select>
+</mapper>

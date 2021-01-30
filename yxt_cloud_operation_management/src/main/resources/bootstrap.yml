@@ -1,0 +1,36 @@
+server:
+  port: 10532
+  servlet:
+    context-path: /service/532/  #所有请求的默认的前缀
+spring:
+  application:
+    name: spmgrsvc
+  profiles:
+    active: test
+  main:
+    #当遇到同样名字的时候，是否允许覆盖注册
+    allow-bean-definition-overriding: true
+  cloud:
+    consul:
+      host: 192.168.10.194 # Consul 服务器地址
+      port: 8500
+      discovery:
+        enabled: true #启用服务发现
+        register: true #启用服务注册
+        deregister: true #服务停止时取消注册
+        healthCheckPath: ${server.servlet.context-path}actuator/health #健康检查路径
+        healthCheckInterval: 15s #健康检查频率
+        instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port} #服务注册标识
+        prefer-ip-address: true #表示注册时使用IP而不是hostname
+        tags: traefik.enable=true,traefik.http.routers.ms-532-spmgrsvc.rule=PathPrefix(`/service/532`),traefik.http.routers.ms-532-spmgrsvc.entrypoints=web
+      config:
+        prefix: config
+        enabled: true
+        format: YAML
+        data-key: data
+        fail-fast: true # true: 如果访问配置中心失败，则停止启动服务
+        watch:
+          # 是否开启自动刷新，默认值 true 开启
+          enabled: true
+          # 刷新频率，单位：毫秒，默认值 1000
+          delay: 1000

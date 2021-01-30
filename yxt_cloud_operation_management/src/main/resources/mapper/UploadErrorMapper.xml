@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.yxt.dao.UploadErrorMapper">
+  <resultMap id="BaseResultMap" type="com.java.yxt.po.UpLoadErrorPo">
+    <result column="key" jdbcType="VARCHAR" property="key" />
+    <result column="key_text" jdbcType="VARCHAR" property="keyText" />
+  </resultMap>
+
+  <insert id="insert" parameterType="com.java.yxt.po.UpLoadErrorPo" >
+    insert into mgt_upload_error (`key`,key_text)
+    values (#{key,jdbcType=VARCHAR},#{keyText,jdbcType=VARCHAR})
+  </insert>
+
+  <select id="selectByKey" parameterType="com.java.yxt.po.UpLoadErrorPo" resultMap="BaseResultMap">
+    select key_text from mgt_upload_error
+    where `key` = #{userName,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="delete">
+    delete from mgt_upload_error
+  </delete>
+</mapper>

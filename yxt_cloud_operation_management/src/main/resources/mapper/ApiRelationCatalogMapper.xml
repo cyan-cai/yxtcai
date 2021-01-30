@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.yxt.dao.ApiRelationCatalogMapper">
+
+  <resultMap id="BaseResultMap" type="com.java.yxt.vo.ApiRelationCatalogVo">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="api_id" jdbcType="VARCHAR" property="apiId" />
+    <result column="api_catalog_id" jdbcType="VARCHAR" property="apiCatalogId" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="creater_id" jdbcType="VARCHAR" property="createrId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="updater_id" jdbcType="VARCHAR" property="updaterId" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+
+  <delete id="delete" parameterType="com.java.yxt.vo.ApiRelationCatalogVo">
+
+    update  mgt_api_relation_catalog
+    set `status` = 0
+    where  api_catalog_id = #{apiCatalogId,jdbcType=VARCHAR}
+  </delete>
+
+  <delete id="unRelation" parameterType="com.java.yxt.vo.ApiRelationCatalogVo">
+    delete from mgt_api_relation_catalog
+    <where>
+    <if test="apiId !=null and apiId !=''">
+      api_id = #{apiId,jdbcType=VARCHAR}
+    </if>
+    <if test="apiCatalogId !=null and apiCatalogId !=''">
+      and api_catalog_id = #{apiCatalogId,jdbcType=VARCHAR}
+    </if>
+    </where>
+
+  </delete>
+
+  <insert id="insert" parameterType="com.java.yxt.vo.ApiRelationCatalogVo" useGeneratedKeys="true" keyProperty="id">
+    insert into mgt_api_relation_catalog (api_id, api_catalog_id, `status`,
+      tenant_id, creater_id, create_time)
+    values
+    <foreach collection="apiIds"  separator="," item="item" index="index">
+      (#{item,jdbcType=VARCHAR}, #{apiCatalogId,jdbcType=VARCHAR}, #{status,jdbcType=SMALLINT},
+      #{tenantId,jdbcType=VARCHAR}, #{createrId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
+      )
+    </foreach>
+
+  </insert>
+
+
+  <update id="update" parameterType="com.java.yxt.vo.ApiRelationCatalogVo">
+
+    update mgt_api_relation_catalog
+    <set>
+     <if test="apiId !=null and apiId !=''">
+       api_id = #{apiId,jdbcType=VARCHAR},
+     </if>
+     <if test="apiCatalogId !=null and apiCatalogId !=''">
+       api_catalog_id = #{apiCatalogId,jdbcType=VARCHAR},
+     </if>
+     <if test="status !=null and status !=''">
+       `status` = #{status,jdbcType=SMALLINT},
+     </if>
+      updater_id = #{updaterId,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    </set>
+    <if test="apiId != 0 and apiId !=''">
+      where api_id = #{apiId,jdbcType=VARCHAR}
+    </if>
+    <if test="id !=0 and id !=''">
+      and id = #{id,jdbcType=VARCHAR}
+    </if>
+
+
+  </update>
+
+  <select id="select" parameterType="com.java.yxt.vo.ApiRelationCatalogVo" resultMap="BaseResultMap">
+    select id, api_id, api_catalog_id, `status`, tenant_id, creater_id, create_time, 
+    updater_id, update_time
+    from mgt_api_relation_catalog
+    where 1=1
+    <if test=" apiCatalogId !=0 ">
+      api_catalog_id = #{apiCatalogId,jdbcType=VARCHAR}
+    </if>
+
+  </select>
+
+</mapper>

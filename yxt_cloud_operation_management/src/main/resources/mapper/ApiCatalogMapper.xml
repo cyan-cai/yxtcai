@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.yxt.dao.ApiCatalogMapper">
+  <resultMap id="BaseResultMap" type="com.java.yxt.vo.ApiCatalogVo">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="parent_name" jdbcType="VARCHAR" property="parentName" />
+    <result column="parent_id" jdbcType="VARCHAR" property="parentId" />
+    <result column="seq_num" jdbcType="SMALLINT" property="seqNum" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="level" jdbcType="SMALLINT" property="level" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="creater_id" jdbcType="VARCHAR" property="createrId" />
+    <result column="creater_name" jdbcType="VARCHAR" property="createrName" />
+    <result column="updater_id" jdbcType="VARCHAR" property="updaterId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+
+
+  <resultMap id="BaseResultTreeMap" type="com.java.yxt.vo.ApiCatalogVo">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="parent_name" jdbcType="VARCHAR" property="parentName" />
+    <result column="parent_id" jdbcType="VARCHAR" property="parentId" />
+    <result column="seq_num" jdbcType="SMALLINT" property="seqNum" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="level" jdbcType="SMALLINT" property="level" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="creater_id" jdbcType="VARCHAR" property="createrId" />
+    <result column="creater_name" jdbcType="VARCHAR" property="createrName" />
+    <result column="updater_id" jdbcType="VARCHAR" property="updaterId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <collection property="childList" ofType="com.java.yxt.vo.ApiCatalogVo" column="{parentId=id}"
+                select="com.java.yxt.dao.ApiCatalogMapper.selectChild"/>
+  </resultMap>
+
+  <delete id="deleteByPrimaryKey" >
+    update  mgt_api_catalog
+    set `status` = 0
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.java.yxt.vo.ApiCatalogVo" keyProperty="id" useGeneratedKeys="true">
+    insert into mgt_api_catalog (parent_id, seq_num,
+      `name`, description, `level`, 
+      `status`, creater_name,tenant_id, creater_id,create_time
+      )
+    values( #{parentId,jdbcType=VARCHAR}, #{seqNum,jdbcType=SMALLINT},
+      #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{level,jdbcType=SMALLINT}, 
+      #{status,jdbcType=SMALLINT}, #{createrName,jdbcType=VARCHAR},#{tenantId,jdbcType=VARCHAR}, #{createrId,jdbcType=VARCHAR},
+       #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.java.yxt.vo.ApiCatalogVo">
+
+    update mgt_api_catalog
+    set
+      parent_id = #{parentId,jdbcType=VARCHAR},
+      seq_num = #{seqNum,jdbcType=SMALLINT},
+      `name` = #{name,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      `level` = #{level,jdbcType=SMALLINT},
+      `status` = #{status,jdbcType=SMALLINT},
+      updater_id = #{updaterId,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+
+  </update>
+
+  <select id="select" resultMap="BaseResultMap">
+    select id,(select name from mgt_api_catalog b  where a.parent_id=b.id ) parent_name, parent_id, seq_num, `name`, description, `level`, `status`, 
+    tenant_id, creater_id,creater_name, updater_id, create_time, update_time
+    from mgt_api_catalog a
+    where 1=1
+    <if test="apiCatalogVo.parentId !=null and apiCatalogVo.parentId !=''">
+      and parent_id = #{apiCatalogVo.parentId,jdbcType=VARCHAR}
+    </if>
+    <if test="apiCatalogVo.name !=null and apiCatalogVo.name !=''">
+      and `name` like concat('%',#{apiCatalogVo.name,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="apiCatalogVo.createrName !=null and apiCatalogVo.createrName !=''">
+      and creater_name like concat('%',#{apiCatalogVo.createrName,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="apiCatalogVo.parentName !=null and apiCatalogVo.parentName !=''">
+     and (select name from mgt_api_catalog b  where a.parent_id=b.id) like concat('%',
+     #{apiCatalogVo.parentName,jdbcType=VARCHAR},'%')
+    </if>
+    and `status`=1
+    order by create_time desc
+  </select>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id,(select name from mgt_api_catalog b  where a.parent_id=b.id ) parent_name, parent_id, seq_num, `name`, description, `level`, `status`,
+    tenant_id, creater_id,creater_name, updater_id, create_time, update_time
+    from mgt_api_catalog a
+    where 1=1
+    <if test="apiCatalogVo.parentId !=null and apiCatalogVo.parentId !=''">
+      and parent_id = #{apiCatalogVo.parentId,jdbcType=VARCHAR}
+    </if>
+    <if test="apiCatalogVo.name !=null and apiCatalogVo.name !=''">
+      and `name` like concat('%',#{apiCatalogVo.name,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="apiCatalogVo.createrName !=null and apiCatalogVo.createrName !=''">
+      and creater_name like concat('%',#{apiCatalogVo.createrName,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="apiCatalogVo.parentName !=null and apiCatalogVo.parentName !=''">
+      and (select name from mgt_api_catalog b  where a.parent_id=b.id) like concat('%',
+      #{apiCatalogVo.parentName,jdbcType=VARCHAR},'%')
+    </if>
+    and `status`=1
+    order by create_time desc
+  </select>
+
+
+
+  <select id="selectChild" parameterType="com.java.yxt.vo.ApiCatalogVo" resultMap="BaseResultTreeMap">
+      select id,(select name from mgt_api_catalog b  where a.parent_id=b.id ) parent_name, parent_id, seq_num,
+      `name`, description, `level`, `status`
+      from mgt_api_catalog a
+      where a.`status` = 1
+      and parent_id = #{parentId,jdbcType=VARCHAR}
+      order by create_time desc
+  </select>
+
+  <select id="selectCatalogTree" parameterType="com.java.yxt.vo.ApiCatalogVo" resultMap="BaseResultTreeMap">
+    select id,(select name from mgt_api_catalog b  where a.parent_id=b.id ) parent_name, parent_id, seq_num, `name`, description, `level`, `status`,
+    tenant_id, creater_id,creater_name, updater_id, create_time, update_time
+    from mgt_api_catalog a
+    where 1=1
+    <if test="apiCatalogVo.id !=null and apiCatalogVo.id !=''">
+      and id = #{apiCatalogVo.id,jdbcType=VARCHAR}
+    </if>
+    <if test="apiCatalogVo.parentId !=null and apiCatalogVo.parentId !=''">
+      and parent_id = #{apiCatalogVo.parentId,jdbcType=VARCHAR}
+    </if>
+    <if test="apiCatalogVo.name !=null and apiCatalogVo.name !=''">
+      and `name` like concat('%',#{apiCatalogVo.name,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="apiCatalogVo.createrName !=null and apiCatalogVo.createrName !=''">
+      and creater_name like concat('%',#{apiCatalogVo.createrName,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="apiCatalogVo.parentName !=null and apiCatalogVo.parentName !=''">
+      and (select name from mgt_api_catalog b  where a.parent_id=b.id) like concat('%',
+      #{apiCatalogVo.parentName,jdbcType=VARCHAR},'%')
+    </if>
+    and `status`=1
+    order by create_time desc
+  </select>
+
+  <select id="selectByIndex" resultMap="BaseResultMap">
+    select id,(select name from mgt_api_catalog b  where a.parent_id=b.id ) parent_name, parent_id, seq_num, `name`, description, `level`, `status`,
+    tenant_id, creater_id,creater_name, updater_id, create_time, update_time
+    from mgt_api_catalog a
+    <where>
+      <if test="apiCatalogVo.name !=null and apiCatalogVo.name !=''">
+         `name` = #{apiCatalogVo.name,jdbcType=VARCHAR}
+      </if>
+      <if test="apiCatalogVo.id !=null and apiCatalogVo.id !=''">
+       and id != #{apiCatalogVo.id,jdbcType=VARCHAR}
+      </if>
+      and `status`=1
+    </where>
+
+  </select>
+
+  <select id="selectApiByCatalog" resultType="com.java.yxt.vo.ApiVo" >
+    select ma.name,ma.api_category as apiCategory,ma.id,ma.description,
+    ma.api_program_name as apiProgramName, ma.extro_path as extroPath, ma.internal_path as internalPath,
+    ma.micro_name as microName,ma.micro_program_name as microProgramName,ma.creater_name,
+    ma.creater_id as createrId,ma.create_time as createTime,ma.status as status
+    from mgt_api_catalog mac, mgt_api_relation_catalog marc,mgt_api ma
+    where  mac.id=marc.api_catalog_id and marc.api_id = ma.id
+    and mac.name = #{apiVo.catalogName,jdbcType=VARCHAR}
+    <if test="apiVo.name !=null and apiVo.name !=''">
+      and ma.name = #{apiVo.name,jdbcType=VARCHAR}
+    </if>
+    <if test="apiVo.apiCategory !=null and apiVo.apiCategory !=''">
+     and ma.api_category = #{apiVo.apiCategory,jdbcType=VARCHAR}
+    </if>
+  </select>
+
+  <select id="selectApiCountByCatalog" parameterType="com.java.yxt.vo.ApiVo" resultType="java.lang.Integer" >
+    select count(*) as apiCount
+    from mgt_api_catalog mac, mgt_api_relation_catalog marc where mac.id=marc.api_catalog_id
+    and mac.name = #{catalogName,jdbcType=VARCHAR}
+  </select>
+</mapper>

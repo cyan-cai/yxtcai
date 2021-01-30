@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.yxt.dao.ServiceMapper">
+  <resultMap id="BaseResultMap" type="com.java.yxt.vo.ServiceVo">
+
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="service_code" jdbcType="VARCHAR" property="serviceCode" />
+    <result column="customer_code" jdbcType="VARCHAR" property="customerCode" />
+    <result column="customerName" jdbcType="VARCHAR" property="customerName" />
+    <result column="product_id" jdbcType="VARCHAR" property="productId" />
+    <result column="productionName" jdbcType="VARCHAR" property="productionName" />
+    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="special_service_number" jdbcType="VARCHAR" property="specialServiceNumber" />
+    <result column="callback_url" jdbcType="VARCHAR" property="callbackUrl" />
+    <result column="platform_ip_list" jdbcType="VARCHAR" property="platformIpList" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="saas" jdbcType="SMALLINT" property="saas" />
+    <result column="service_type" jdbcType="VARCHAR" property="serviceType" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="creater_id" jdbcType="VARCHAR" property="createrId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="updater_id" jdbcType="VARCHAR" property="updaterId" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+
+  <delete id="deleteByPrimaryKey" parameterType="com.java.yxt.vo.ServiceVo">
+
+    delete from mgt_service
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.java.yxt.vo.ServiceVo" useGeneratedKeys="true" keyProperty="id">
+
+    insert into mgt_service (service_code, customer_code, product_id,
+      start_time, end_time, special_service_number, 
+      callback_url, platform_ip_list, `status`, 
+      tenant_id, creater_id, create_time,service_type)
+    values (#{serviceCode,jdbcType=VARCHAR}, #{customerCode,jdbcType=VARCHAR}, #{productId,jdbcType=VARCHAR},
+      #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{specialServiceNumber,jdbcType=VARCHAR}, 
+      #{callbackUrl,jdbcType=VARCHAR}, #{platformIpList,jdbcType=VARCHAR}, #{status,jdbcType=SMALLINT}, 
+      #{tenantId,jdbcType=VARCHAR}, #{createrId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},#{serviceType,jdbcType=VARCHAR})
+
+  </insert>
+
+  <update id="update" parameterType="com.java.yxt.vo.ServiceVo">
+    update mgt_service set
+      callback_url = #{callbackUrl,jdbcType=VARCHAR},
+      updater_id = #{updaterId,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <select id="select" resultMap="BaseResultMap">
+    select ms.id, ms.service_code, ms.customer_code, ms.product_id, ms.start_time, ms.end_time, ms.special_service_number,
+    ms.callback_url, ms.platform_ip_list, ms.`status`, ms.tenant_id, ms.creater_id, ms.create_time, ms.updater_id,
+    ms.update_time,mc.name as customerName,mc.saas as saas
+    from mgt_service ms
+    left join mgt_customer mc on ms.customer_code = mc.customer_code
+    where 1=1
+    <if test="serviceVo.serviceCode !=null and serviceVo.serviceCode !=''">
+     and ms.service_code like concat('%',#{serviceVo.serviceCode,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="serviceVo.callbackUrl !=null and serviceVo.callbackUrl !=''">
+      and ms.callback_url like concat('%',#{serviceVo.callbackUrl,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="serviceVo.customerName !=null and serviceVo.customerName !=''">
+      and  mc.name like concat('%',#{serviceVo.customerName,jdbcType=VARCHAR},'%')
+    </if>
+  </select>
+
+  <select id="selectSubscribe" resultMap="BaseResultMap">
+    select ms.id, ms.service_code, ms.customer_code, ms.product_id, ms.start_time, ms.end_time, ms.special_service_number,
+    ms.callback_url, ms.platform_ip_list, ms.`status`, ms.tenant_id, ms.creater_id, ms.create_time, ms.updater_id,
+    ms.update_time,mc.name as customerName,mp.name as productionName
+    from mgt_service ms
+    left join mgt_customer mc on ms.customer_code = mc.customer_code
+    left join mgt_production mp on mp.sale_code = ms.product_id
+    where 1=1
+    <if test="serviceVo.serviceCode !=null and serviceVo.serviceCode !=''">
+      and ms.service_code like concat('%',#{serviceVo.serviceCode,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="serviceVo.productionName !=null and serviceVo.productionName !=''">
+      and mp.name like concat('%',#{serviceVo.productionName,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="serviceVo.status !=null and serviceVo.status==1">
+      and ms.end_time >sysdate()
+      and ms.start_time &lt;sysdate()
+    </if>
+    <if test="serviceVo.status !=null and serviceVo.status==0">
+      and (ms.end_time &lt;=sysdate() or ms.start_time &gt;=sysdate())
+    </if>
+    <if test="serviceVo.customerName !=null and serviceVo.customerName !=''">
+      and  mc.name like concat('%',#{serviceVo.customerName,jdbcType=VARCHAR},'%')
+    </if>
+  </select>
+
+
+  <select id="selectAll" parameterType="com.java.yxt.vo.ServiceVo" resultMap="BaseResultMap">
+
+    select id, service_code, customer_code, product_id, start_time, end_time, special_service_number,
+    callback_url, platform_ip_list, `status`, tenant_id, creater_id, create_time, updater_id, 
+    update_time
+    from mgt_service where 1=1
+    <if test="customerCode !=null and customerCode !=''">
+     and customer_code = #{customerCode,jdbcType=VARCHAR}
+    </if>
+    <if test="serviceCode !=null and serviceCode !=''">
+      and service_code = #{serviceCode,jdbcType=VARCHAR}
+    </if>
+    <if test="status !=null and status==1">
+      and start_time &lt;now()
+      and end_time > now()
+    </if>
+  </select>
+
+
+  <select id="unRelationWhiteServiceCode" parameterType="com.java.yxt.vo.TerminalWhiteVo" resultMap="BaseResultMap">
+
+    select a.id, a.service_code, a.customer_code,a.callback_url, a.platform_ip_list, a.`status`
+    from mgt_service a,mgt_terminal b,mgt_customer c  where
+    b.customer_id=c.id
+    and a.customer_code=c.customer_code
+    and a.start_time  &lt;= now()
+    and a.end_time >= now()
+    and service_code not in
+    (
+    select service_code from mgt_terminal_white mtw
+    where
+    mtw.terminal_id = #{terminalId,jdbcType=VARCHAR}
+    and service_code is not null
+    )
+    <if test="terminalId !=null and terminalId !=''">
+      and b.id = #{terminalId,jdbcType=VARCHAR}
+    </if>
+  </select>
+
+
+  <select id="selectTerminalServiceCode" parameterType="com.java.yxt.vo.TerminalWhiteVo" resultMap="BaseResultMap">
+
+    select a.id, a.service_code, a.customer_code,a.callback_url, a.platform_ip_list, a.`status`
+    from mgt_service a,mgt_terminal b,mgt_customer c  where
+    b.customer_id=c.id
+    and a.customer_code=c.customer_code
+    and b.id = #{terminalId,jdbcType=VARCHAR}
+  </select>
+
+
+  <select id="unRelationBlackServiceCode" parameterType="com.java.yxt.vo.TerminalBlackVo" resultMap="BaseResultMap">
+
+    select id, service_code, customer_code,callback_url, platform_ip_list, `status`
+    from mgt_service where 1=1
+    <if test="customerCode !=null and customerCode !=''">
+      and customer_code = #{customerCode,jdbcType=VARCHAR}
+    </if>
+    and start_time  &lt;= now()
+    and end_time >= now()
+    and service_code not in
+    (
+    select service_code from mgt_terminal_black mtb
+    where
+    mtb.customer_code=#{customerCode,jdbcType=VARCHAR}
+    and `type` = #{type,jdbcType=VARCHAR}
+    and `level` = "customer" and service_code is not null
+    )
+  </select>
+
+  <select id="selectEnableBusinewss" parameterType="com.java.yxt.vo.ServiceVo" resultMap="BaseResultMap">
+    select id, service_code, customer_code, product_id, start_time, end_time, special_service_number,
+    callback_url, platform_ip_list, `status`, tenant_id, creater_id, create_time, updater_id,
+    update_time
+    from mgt_service
+    <where>
+      start_time &lt; now()
+      and end_time &gt;now()
+      <if test="customerCode !=null and customerCode !=''">
+        and customer_code = #{customerCode,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectById" parameterType="com.java.yxt.vo.ServiceVo" resultMap="BaseResultMap">
+    select id, service_code, customer_code, product_id, start_time, end_time, special_service_number,
+    callback_url, platform_ip_list, `status`, tenant_id, creater_id, create_time, updater_id,
+    update_time
+    from mgt_service
+    <where>
+      <if test="id !=null and id !=''">
+        id = #{id,jdbcType=VARCHAR}
+      </if>
+      <if test="serviceCode !=null and serviceCode !=''">
+        and service_code = #{serviceCode,jdbcType=VARCHAR}
+      </if>
+      <if test="customerCode !=null and customerCode !=''">
+        and customer_code = #{customerCode,jdbcType=VARCHAR}
+      </if>
+      <if test="status !=null and status==1">
+        and start_time &lt;now()
+        and end_time > now()
+      </if>
+    </where>
+
+  </select>
+
+  <select id="selectByCustomerandProduct" parameterType="com.java.yxt.vo.ServiceVo" resultMap="BaseResultMap">
+    select id, service_code, customer_code, product_id, start_time, end_time, special_service_number,
+    callback_url, platform_ip_list, `status`, tenant_id, creater_id, create_time, updater_id,
+    update_time
+    from mgt_service where 1=1
+      and customer_code = #{customerCode,jdbcType=VARCHAR}
+      and product_id = #{productId,jdbcType=VARCHAR}
+      and end_time >= now()
+  </select>
+
+  <select id="selectBySaleCode" parameterType="com.java.yxt.vo.ServiceVo" resultMap="BaseResultMap">
+    select id, service_code, customer_code, product_id, start_time, end_time, special_service_number,
+    callback_url, platform_ip_list, `status`, tenant_id, creater_id, create_time, updater_id,
+    update_time
+    from mgt_service where 1=1
+      and product_id = #{productId,jdbcType=VARCHAR}
+      and start_time &lt;now()
+      and end_time > now()
+  </select>
+
+  <select id="selectEnableBusinewssByCustomerName" parameterType="com.java.yxt.vo.ServiceVo" resultMap="BaseResultMap">
+    select ms.id, ms.service_code, ms.customer_code, ms.product_id, ms.start_time, ms.end_time, ms.special_service_number,
+    ms.callback_url, ms.platform_ip_list, ms.`status`, ms.tenant_id, ms.creater_id, ms.create_time, ms.updater_id,
+    ms.update_time,ms.service_type
+    from mgt_service ms join mgt_customer mc on ms.customer_code = mc.customer_code
+    <where>
+      ms.start_time &lt; now()
+      and ms.end_time &gt;now()
+      <if test="customerName !=null and customerName !=''">
+        and mc.`name` like concat('%',#{customerName,jdbcType=VARCHAR},'%')
+      </if>
+      and mc.`status` = 1
+    </where>
+  </select>
+</mapper>

@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.yxt.dao.TerminalBlackMapper">
+  <resultMap id="BaseResultMap" type="com.java.yxt.vo.TerminalBlackVo">
+
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="level" jdbcType="VARCHAR" property="level" />
+    <result column="service_code" jdbcType="VARCHAR" property="serviceCode" />
+    <result column="terminal_id" jdbcType="VARCHAR" property="terminalId" />
+    <result column="msisdn" jdbcType="VARCHAR" property="msisdn" />
+    <result column="customer_code" jdbcType="VARCHAR" property="customerCode" />
+    <result column="customerName" jdbcType="VARCHAR" property="customerName" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="creater_id" jdbcType="VARCHAR" property="createrId" />
+    <result column="creater_name" jdbcType="VARCHAR" property="createrName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="updater_id" jdbcType="VARCHAR" property="updaterId" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+
+
+  <delete id="delete" parameterType="com.java.yxt.vo.TerminalBlackVo">
+    delete from mgt_terminal_black
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.java.yxt.vo.TerminalBlackVo" keyProperty="id" useGeneratedKeys="true">
+    insert into mgt_terminal_black (`level`, service_code, terminal_id,
+      `type`, `status`, tenant_id, customer_code,
+      creater_id, creater_name,create_time)
+    values
+    <if test="serviceCodes != null and serviceCodes.size()>0">
+      <foreach collection="serviceCodes" separator="," index="index" item="item">
+        (#{level,jdbcType=VARCHAR}, #{item,jdbcType=VARCHAR}, #{terminalId,jdbcType=VARCHAR},
+        #{type,jdbcType=VARCHAR}, #{status,jdbcType=SMALLINT}, #{tenantId,jdbcType=VARCHAR}, #{customerCode,jdbcType=VARCHAR},
+        #{createrId,jdbcType=VARCHAR},#{createrName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+      </foreach>
+    </if>
+    <if test="serviceCodes == null or serviceCodes.size()==0">
+      (#{level,jdbcType=VARCHAR}, #{serviceCode,jdbcType=VARCHAR}, #{terminalId,jdbcType=VARCHAR},
+      #{type,jdbcType=VARCHAR}, #{status,jdbcType=SMALLINT}, #{tenantId,jdbcType=VARCHAR}, #{customerCode,jdbcType=VARCHAR},
+      #{createrId,jdbcType=VARCHAR},#{createrName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+    </if>
+  </insert>
+
+  <insert id="insertList" parameterType="java.util.List" >
+    insert into mgt_terminal_black (`level`, service_code, terminal_id,
+    `type`, `status`, tenant_id, customer_code,
+    creater_id, creater_name,create_time)
+    values
+    <foreach collection="list" separator="," index="index" item="item">
+        (#{item.level,jdbcType=VARCHAR}, #{item.serviceCode,jdbcType=VARCHAR}, #{item.terminalId,jdbcType=VARCHAR},
+        #{item.type,jdbcType=VARCHAR}, #{item.status,jdbcType=SMALLINT}, #{item.tenantId,jdbcType=VARCHAR}, #{item.customerCode,jdbcType=VARCHAR},
+        #{item.createrId,jdbcType=VARCHAR},#{item.createrName,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP})
+    </foreach>
+  </insert>
+
+  <update id="update" parameterType="com.java.yxt.vo.TerminalBlackVo">
+    update mgt_terminal_black
+    set
+    <if test="level !=null and level !=''">
+      `level` = #{level,jdbcType=VARCHAR},
+    </if>
+    <if test="serviceCode !=null and serviceCode !=''">
+      service_code = #{serviceCode,jdbcType=VARCHAR},
+    </if>
+    <if test="terminalId !=null and terminalId !=''">
+      terminal_id = #{terminalId,jdbcType=VARCHAR},
+    </if>
+    <if test="type !=null and type !=''">
+      `type` = #{type,jdbcType=VARCHAR},
+    </if>
+    <if test="status !=null">
+      `status` = #{status,jdbcType=SMALLINT},
+    </if>
+      updater_id = #{updaterId,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+
+
+  <select id="selectUser" parameterType="com.java.yxt.vo.TerminalBlackVo" resultMap="BaseResultMap">
+    select mtb.id, mtb.`level` as level, mtb.service_code, mtb.terminal_id,mtb.customer_code, mtb.`type` as type,
+    mtb.`status` as status, mtb.create_time,mc.name as customerName,mt.msisdn,mtb.creater_name
+    from mgt_terminal_black mtb, mgt_customer mc,mgt_terminal mt
+    where mtb.customer_code=mc.customer_code and mt.id = mtb.terminal_id
+    and mc.`status` =1 and mt.user_status='1'
+   	<if test="terminalBlackVo.msisdn !=null and terminalBlackVo.msisdn !=''">
+     and mt.msisdn like concat('%', #{terminalBlackVo.msisdn},'%')
+    </if>
+    <if test="terminalBlackVo.id !=null and terminalBlackVo.id !=''">
+      and mtb.id = #{terminalBlackVo.id,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalBlackVo.level == '全部'">
+     and mtb.`level` in ('terminal_sys','terminal_idt')
+    </if>
+    <if test="terminalBlackVo.level !='全部'">
+      and mtb.`level` = #{terminalBlackVo.level,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalBlackVo.type !=null and terminalBlackVo.type !=''">
+      and mtb.`type` = #{terminalBlackVo.type,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalBlackVo.status !=null">
+      and mtb.`status` = #{terminalBlackVo.status,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalBlackVo.customerName !=null and terminalBlackVo.customerName !=''">
+      and mc.name like concat('%', #{terminalBlackVo.customerName,jdbcType=VARCHAR},'%')
+    </if>
+     <if test="terminalBlackVo.createBeginTime !=null">
+      and mtb.create_time >= #{terminalBlackVo.createBeginTime,jdbcType=TIMESTAMP}
+    </if>
+    <if test="terminalBlackVo.createEndTime !=null">
+      and mtb.create_time  &lt;= #{terminalBlackVo.createEndTime,jdbcType=TIMESTAMP}
+    </if>
+    <if test="terminalBlackVo.serviceCode !=null and terminalBlackVo.serviceCode !=''">
+      and mtb.service_code like concat('%', #{terminalBlackVo.serviceCode},'%')
+    </if>
+    <if test="terminalBlackVo.createrName !=null and terminalBlackVo.createrName !=''">
+      and mtb.creater_name like concat('%', #{terminalBlackVo.createrName},'%')
+    </if>
+    order by mtb.create_time desc
+  </select>
+
+  <select id="selectSp" parameterType="com.java.yxt.vo.TerminalBlackVo" resultMap="BaseResultMap">
+    select mtb.id, mtb.`level` as level, mtb.service_code, mtb.terminal_id,mtb.customer_code, mtb.`type` as type,
+    mtb.`status` as status, mtb.create_time,mc.name as customerName,mtb.creater_name
+    from mgt_terminal_black mtb, mgt_customer mc
+    where mtb.customer_code=mc.customer_code
+    and mc.`status` =1
+    <if test="terminalBlackVo.id !=null and terminalBlackVo.id !=''">
+      and mtb.id = #{terminalBlackVo.id,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalBlackVo.level == '全部'">
+      and mtb.`level` in ('terminal_sys','terminal_idt')
+    </if>
+    <if test="terminalBlackVo.level !='全部'">
+      and mtb.`level` = #{terminalBlackVo.level,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalBlackVo.type !=null and terminalBlackVo.type !=''">
+      and mtb.`type` = #{terminalBlackVo.type,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalBlackVo.status !=null">
+      and mtb.`status` = #{terminalBlackVo.status,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalBlackVo.customerName !=null and terminalBlackVo.customerName !=''">
+      and mc.name like concat('%', #{terminalBlackVo.customerName,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="terminalBlackVo.createBeginTime !=null">
+      and mtb.create_time >= #{terminalBlackVo.createBeginTime,jdbcType=TIMESTAMP}
+    </if>
+    <if test="terminalBlackVo.createEndTime !=null">
+      and mtb.create_time  &lt;= #{terminalBlackVo.createEndTime,jdbcType=TIMESTAMP}
+    </if>
+    <if test="terminalBlackVo.serviceCode !=null and terminalBlackVo.serviceCode !=''">
+      and mtb.service_code like concat('%', #{terminalBlackVo.serviceCode},'%')
+    </if>
+    <if test="terminalBlackVo.createrName !=null and terminalBlackVo.createrName !=''">
+      and mtb.creater_name like concat('%', #{terminalBlackVo.createrName},'%')
+    </if>
+    order by mtb.create_time desc
+  </select>
+
+
+  <select id="isTerminalExists" parameterType="com.java.yxt.vo.TerminalBlackVo" resultMap="BaseResultMap">
+    select id, `level`, service_code, terminal_id, `type`, `status`, tenant_id, creater_id,
+    create_time, updater_id, update_time
+    from mgt_terminal_black
+    where `level` = #{level,jdbcType=VARCHAR}
+    and terminal_id = #{terminalId,jdbcType=VARCHAR}
+    and `type` = #{type,jdbcType=VARCHAR}
+    <if test="id !=null and id !=''">
+    and  id !=#{id,jdbcType=VARCHAR}
+    </if>
+  </select>
+
+  <select id="isTerminalSpExists" parameterType="com.java.yxt.vo.TerminalBlackVo" resultMap="BaseResultMap">
+    select id, `level`, service_code, terminal_id, `type`, `status`, tenant_id, creater_id,
+    create_time, updater_id, update_time
+    from mgt_terminal_black
+    where customer_code = #{customerCode,jdbcType=VARCHAR}
+    and service_code = #{serviceCode,jdbcType=VARCHAR}
+    and `type` = #{type,jdbcType=VARCHAR}
+  </select>
+
+
+
+
+  <!-- <select id="selectAll" parameterType="com.java.yxt.vo.TerminalBlackVo" resultMap="BaseResultMap">
+    select id, `level`, service_code, terminal_id, `type`, `status`, tenant_id, creater_id,
+    create_time, updater_id, update_time
+    from mgt_terminal_black
+  </select> -->
+
+  <select id="selectAll" parameterType="com.java.yxt.vo.TerminalBlackVo" resultMap="BaseResultMap">
+    select mtb.id, mtb.`level` as level, mtb.service_code, mtb.terminal_id,mtb.customer_code, mtb.`type` as type,
+    mtb.`status` as status, mtb.create_time,mc.name as customerName,mt.msisdn
+    from mgt_terminal_black mtb, mgt_customer mc,mgt_terminal mt
+    where mtb.customer_code=mc.customer_code and mt.id = mtb.terminal_id
+    and mc.`status` =1 and mt.user_status = '1'
+  	<if test="terminalBlackVo.msisdn !=null and terminalBlackVo.msisdn !=''">
+     and mt.msisdn like concat('%', #{terminalBlackVo.msisdn},'%')
+    </if>
+	 <if test="terminalBlackVo.id !=null and terminalBlackVo.id !=''">
+      and mtb.id = #{terminalBlackVo.id,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalBlackVo.level == '全部'">
+     and mtb.`level` in ('terminal_sys','terminal_idt')
+    </if>
+    <if test="terminalBlackVo.level !='全部'">
+      and mtb.`level` = #{terminalBlackVo.level,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalBlackVo.type !=null and terminalBlackVo.type !=''">
+      and mtb.`type` = #{terminalBlackVo.type,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalBlackVo.status !=null">
+      and mtb.`status` = #{terminalBlackVo.status,jdbcType=VARCHAR}
+    </if>
+    <if test="terminalBlackVo.customerName !=null and terminalBlackVo.customerName !=''">
+      and mc.name like concat('%', #{terminalBlackVo.customerName,jdbcType=VARCHAR},'%')
+     </if>
+     <if test="terminalBlackVo.createBeginTime !=null">
+      and mtb.create_time >= #{terminalBlackVo.createBeginTime,jdbcType=TIMESTAMP}
+    </if>
+    <if test="terminalBlackVo.createEndTime !=null">
+      and mtb.create_time  &lt;= #{terminalBlackVo.createEndTime,jdbcType=TIMESTAMP}
+    </if>
+    order by mtb.create_time desc
+  </select>
+  
+    <select id="selectByCustomerName" parameterType="com.java.yxt.vo.TerminalBlackVo" resultMap="BaseResultMap">
+      select mc.customer_code,mc.name as customerName
+    from  mgt_customer mc
+    where  mc.`status` =1
+      <if test="terminalBlackVo.customerName !=null and terminalBlackVo.customerName !=''">
+        and mc.name like concat('%', #{terminalBlackVo.customerName,jdbcType=VARCHAR},'%')
+      </if>
+    </select>
+
+  <update id="enableDisable">
+    update mgt_terminal_black
+    set `status` = #{terminalBlackVo.status,jdbcType=SMALLINT}
+    where id = #{terminalBlackVo.id,jdbcType=VARCHAR}
+  </update>
+
+  <select id="selectCustomerCodeByCustomerName" parameterType="string" resultType="string" >
+    select customer_code from  mgt_customer mc
+    where  mc.`status` =1
+      and mc.name= #{customerName,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectTerminalBlackByContion" parameterType="com.java.yxt.vo.TerminalBlackVo" resultMap="BaseResultMap">
+    select mtb.id, mtb.`level` as level, mtb.service_code, mtb.terminal_id,mtb.customer_code, mtb.`type` as type,
+    mtb.`status` as status, mtb.create_time,mc.name as customerName,mtb.creater_name
+    from mgt_terminal_black mtb, mgt_customer mc
+    where mtb.customer_code=mc.customer_code
+    and mc.`status` =1
+     and mc.name = #{terminalBlackVo.customerName,jdbcType=VARCHAR}
+     and mtb.service_code = #{terminalBlackVo.serviceCode,jdbcType=VARCHAR}
+    and mtb.`type` = #{terminalBlackVo.type,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectTerminalBlackByCustomerCode" parameterType="com.java.yxt.vo.TerminalBlackVo" resultMap="BaseResultMap">
+    select mtb.id, mtb.`level` as level, mtb.service_code, mtb.terminal_id,mtb.customer_code, mtb.`type` as type,
+    mtb.`status` as status, mtb.create_time,mtb.creater_name
+    from mgt_terminal_black mtb
+    where mtb.customer_code=#{terminalBlackVo.customerCode,jdbcType=VARCHAR}
+    and mtb.`type`= #{terminalBlackVo.type,jdbcType=VARCHAR}
+    and mtb.`level` = 'customer'
+    and mtb.`status` =1
+  </select>
+
+  <select id="selectTerminalBlackByMsisdn" parameterType="com.java.yxt.vo.TerminalBlackVo" resultMap="BaseResultMap">
+    select mtb.id, mtb.`level` as level, mtb.service_code, mtb.terminal_id,mtb.customer_code, mtb.`type` as type,
+    mtb.`status` as status, mtb.create_time,mtb.creater_name
+    from mgt_terminal_black mtb,mgt_terminal mt
+    where mtb.terminal_id=mt.id
+    and mt.msisdn= #{terminalBlackVo.msisdn,jdbcType=VARCHAR}
+    and mtb.`level` = #{terminalBlackVo.level,jdbcType=VARCHAR}
+    and mtb.`type`= #{terminalBlackVo.type,jdbcType=VARCHAR}
+    and mtb.`status` =1
+  </select>
+</mapper>

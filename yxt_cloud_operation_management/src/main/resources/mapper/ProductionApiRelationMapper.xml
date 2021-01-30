@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.java.yxt.dao.ProductionApiRelationMapper">
+    <resultMap id="Base_Cloumn" type="com.java.yxt.po.ProductionApiRelationPo">
+        <result column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="product_id" property="productId" jdbcType="VARCHAR"/>
+        <result column="api_id" property="apiId" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="tenant_id" property="tenantId" jdbcType="VARCHAR"/>
+        <result column="creater_id" property="createrId" jdbcType="VARCHAR"/>
+        <result column="updater_id" property="updaterId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="All">
+      id, product_id,api_id,status,tenant_id,creater_id,updater_id,create_time,update_time
+    </sql>
+
+    <insert id="add" parameterType="com.java.yxt.vo.ProductionApiRelationVo" useGeneratedKeys="true" keyProperty="id">
+        insert into mgt_production_api_relation(product_id,api_id,status,tenant_id,creater_id,
+        create_time)
+        values
+        <foreach collection="apiIds" separator="," index="index" item="item">
+           ( #{productId,jdbcType=VARCHAR},#{item,jdbcType=VARCHAR},#{status,jdbcType=INTEGER},
+            #{tenantId,jdbcType=VARCHAR},#{createrId,jdbcType=VARCHAR},
+            #{createTime,jdbcType=TIMESTAMP} )
+        </foreach>
+
+    </insert>
+
+    <select id="select" parameterType="com.java.yxt.vo.ProductionApiRelationVo" resultType="com.java.yxt.vo.ProductionApiRelationVo" >
+        select a.api_id as id , b.name as name ,b.api_category as apiCategory
+        from mgt_production_api_relation a,mgt_api b,mgt_production c
+        where a.api_id = b.id and a.product_id=c.id
+        <if test="saleCode !=null and saleCode !=''">
+            and c.sale_code = #{saleCode,jdbcType=VARCHAR}
+        </if>
+        <if test="productId !=null and productId !=''">
+            and a.product_id = #{productId,jdbcType=VARCHAR}
+        </if>
+        <if test="productStatus!=null and productStatus!=''">
+        	and c.status=#{productStatus,jdbcType=INTEGER}
+        </if>
+        <if test="name!=null and name!=''">
+            and b.name like concat('%',#{name,jdbcType=INTEGER},'%')
+        </if>
+        <if test="apiCategory !=null and apiCategory!=''">
+            and b.api_category=#{apiCategory,jdbcType=INTEGER}
+        </if>
+        order by b.create_time desc
+    </select>
+
+    <delete id="delete" parameterType="com.java.yxt.vo.ProductionApiRelationVo">
+        delete from mgt_production_api_relation
+        where product_id = #{productId,jdbcType=VARCHAR}
+    </delete>
+
+</mapper>

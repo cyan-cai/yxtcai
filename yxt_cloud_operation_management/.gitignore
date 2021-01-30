@@ -1,0 +1,46 @@
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**
+!**/src/test/**
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+
+### VS Code ###
+.vscode/
+
+
+yxt_cloud_config/.mvn/
+yxt_cloud_config/mvnw
+yxt_cloud_config/mvnw.cmd
+yxt_cloud_gateway/.mvn/
+yxt_cloud_gateway/mvnw
+yxt_cloud_gateway/mvnw.cmd
+yxt_user_service/.mvn/
+yxt_user_service/mvnw
+yxt_user_service/mvnw.cmd
+yxt_cloud_common/.mvn/
+yxt_cloud_common/mvnw
+yxt_cloud_common/mvnw.cmd
+

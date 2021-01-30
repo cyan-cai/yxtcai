@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.yxt.dao.ServeridMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.java.yxt.vo.ServeridVo">
+       <id column="id" property="id" />
+       <result column="server_id" property="serverId" />
+       <result column="api_category" property="apiCategory" />
+       <result column="status" property="status" />
+       <result column="tenant_id" property="tenantId" />
+       <result column="creater_id" property="createrId" />
+       <result column="updater_id" property="updaterId" />
+       <result column="create_time" property="createTime" />
+       <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="SelectVO">
+        select
+            id,
+            server_id,
+            api_category,
+            status,
+            tenant_id,
+            creater_id,
+            updater_id,
+            create_time,
+            update_time
+        from mgt_serverid
+    </sql>
+
+    <!-- 查询条件 -->
+    <sql id="SQLWhereSearch">
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="serverId != null and serverId != ''">
+                and server_id = #{serverId}
+            </if>
+            <if test="apiCategory != null and apiCategory != ''">
+                and api_category = #{apiCategory}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="tenantId != null and tenantId != ''">
+                and tenant_id = #{tenantId}
+            </if>
+            <if test="createrId != null and createrId != ''">
+                and creater_id = #{createrId}
+            </if>
+            <if test="updaterId != null and updaterId != ''">
+                and updater_id = #{updaterId}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+        </where>
+    </sql>
+
+    <select id="select" parameterType="com.java.yxt.vo.ServeridVo" resultMap="BaseResultMap">
+        <include refid="SelectVO"/>
+        where 1=1
+    </select>
+
+    <select id="selectList" parameterType="com.java.yxt.vo.ServeridVo" resultMap="BaseResultMap">
+        <include refid="SelectVO"/>
+        <include refid="SQLWhereSearch"/>
+    </select>
+
+    <insert id="save" parameterType="com.java.yxt.vo.ServeridVo" useGeneratedKeys="true" keyProperty="id">
+        insert into mgt_serverid (
+                id,
+                server_id,
+                api_category,
+                status,
+                tenant_id,
+                creater_id,
+                updater_id,
+                create_time,
+                update_time
+        )values(
+            <if test="id != null and id != ''">
+                #{id},
+            </if>
+            <if test="serverId != null and serverId != ''">
+                #{serverId},
+            </if>
+            <if test="apiCategory != null and apiCategory != ''">
+                #{apiCategory},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            <if test="tenantId != null and tenantId != ''">
+                #{tenantId},
+            </if>
+            <if test="createrId != null and createrId != ''">
+                #{createrId},
+            </if>
+            <if test="updaterId != null and updaterId != ''">
+                #{updaterId},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime}
+            </if>
+		)
+    </insert>
+
+    <update id="updateById" parameterType="com.java.yxt.vo.ServeridVo">
+        update mgt_serverid
+        <set>
+            <if test="id != null and id != ''">
+                id = #{id},
+            </if>
+            <if test="serverId != null and serverId != ''">
+                server_id = #{serverId},
+            </if>
+            <if test="apiCategory != null and apiCategory != ''">
+                api_category = #{apiCategory},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="tenantId != null and tenantId != ''">
+                tenant_id = #{tenantId},
+            </if>
+            <if test="createrId != null and createrId != ''">
+                creater_id = #{createrId},
+            </if>
+            <if test="updaterId != null and updaterId != ''">
+                updater_id = #{updaterId},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime}
+            </if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <delete id="removeById" parameterType="com.java.yxt.vo.ServeridVo">
+        delete from mgt_serverid
+        <where>
+            id = #{id}
+        </where>
+    </delete>
+
+</mapper>

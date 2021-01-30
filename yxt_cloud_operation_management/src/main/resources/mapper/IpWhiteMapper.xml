@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.yxt.dao.IpWhiteMapper">
+  <resultMap id="BaseResultMap" type="com.java.yxt.vo.IpWhiteVo">
+
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="customer_id" jdbcType="VARCHAR" property="customerId" />
+    <result column="ip_protocal" jdbcType="VARCHAR" property="ipProtocal" />
+    <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="name" jdbcType="VARCHAR" property="customerName" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="creater_id" jdbcType="VARCHAR" property="createrId" />
+    <result column="creater_name" jdbcType="VARCHAR" property="createrName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="updater_id" jdbcType="VARCHAR" property="updaterId" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+
+
+  <insert id="insert" parameterType="com.java.yxt.vo.IpWhiteVo" keyProperty="id" useGeneratedKeys="true">
+
+    insert into mgt_ip_white (customer_id, ip_protocal, ip, 
+      `status`, tenant_id, creater_id, creater_name,
+      create_time
+      )
+    values
+    <foreach collection="ips" separator="," index="index" item="item">
+      (#{customerId,jdbcType=VARCHAR}, #{item.ipProtocal,jdbcType=VARCHAR}, #{item.ip,jdbcType=VARCHAR},
+      #{status,jdbcType=SMALLINT}, #{tenantId,jdbcType=VARCHAR}, #{createrId,jdbcType=VARCHAR},
+      #{createrName,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP}
+      )
+    </foreach>
+    ON DUPLICATE KEY UPDATE
+    ip_protocal = values(ip_protocal),
+    ip = values(ip),
+    `status` = values(`status`),
+    update_time = values(update_time),
+    updater_id = values(updater_id)
+  </insert>
+
+  <update id="update" parameterType="com.java.yxt.vo.IpWhiteVo">
+
+    update mgt_ip_white
+    set
+    <if test="ip !=null and ip !=''">
+       ip = #{ip,jdbcType=VARCHAR},
+    </if>
+    <if test="ipProtocal !=null and ipProtocal !=''">
+       ip_protocal = #{ipProtocal,jdbcType=VARCHAR},
+    </if>
+    <if test="status !=null ">
+      `status` = #{status,jdbcType=SMALLINT},
+    </if>
+    <if test="updaterId !=null and updaterId !=''">
+      updater_id = #{updaterId,jdbcType=VARCHAR},
+    </if>
+    <if test="updateTime !=null">
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    </if>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <select id="select" resultMap="BaseResultMap">
+    select miw.id, miw.customer_id, miw.ip_protocal, miw.ip, miw.`status`,
+     miw.creater_id, miw.create_time,mc.name,miw.creater_name
+    from mgt_ip_white miw, mgt_customer mc where miw.customer_id= mc.id
+    <if test="ipWhiteVo.id !=null and ipWhiteVo.id !=''">
+      and miw.id = #{ipWhiteVo.id,jdbcType=VARCHAR}
+    </if>
+    <if test="ipWhiteVo.customerName !=null and ipWhiteVo.customerName !=''">
+      and mc.name like concat('%',#{ipWhiteVo.customerName,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="ipWhiteVo.status !=null">
+      and miw.status = #{ipWhiteVo.status,jdbcType=VARCHAR}
+    </if>
+    <if test="ipWhiteVo.ip !=null and ipWhiteVo.ip !=''">
+      and miw.ip like concat('%',#{ipWhiteVo.ip,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="ipWhiteVo.ipProtocal !=null and ipWhiteVo.ipProtocal !=''">
+      and miw.ip_protocal like concat('%',#{ipWhiteVo.ipProtocal,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="ipWhiteVo.createBeginTime !=null and ipWhiteVo.createBeginTime !=''">
+      and miw.create_time >= #{ipWhiteVo.createBeginTime,jdbcType=VARCHAR}
+    </if>
+    <if test="ipWhiteVo.createEndTime !=null and ipWhiteVo.createEndTime !=''">
+      and miw.create_time &lt;= #{ipWhiteVo.createEndTime,jdbcType=VARCHAR}
+    </if>
+    <if test="ipWhiteVo.createrName !=null and ipWhiteVo.createrName !=''">
+      and miw.creater_name like concat('%',#{ipWhiteVo.createrName,jdbcType=VARCHAR},'%')
+    </if>
+  </select>
+
+  <select id="selectAll" parameterType="com.java.yxt.vo.IpWhiteVo" resultMap="BaseResultMap">
+    select miw.id, miw.customer_id, miw.ip_protocal, miw.ip, miw.`status`,
+    miw.creater_id, miw.create_time,mc.name,miw.creater_name
+    from mgt_ip_white miw, mgt_customer mc where miw.customer_id= mc.id
+    <if test="ipWhiteVo.id !=null and ipWhiteVo.id !=''">
+      and miw.id = #{ipWhiteVo.id,jdbcType=VARCHAR}
+    </if>
+    <if test="ipWhiteVo.customerName !=null and ipWhiteVo.customerName !=''">
+      and mc.name like concat('%',#{ipWhiteVo.customerName,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="ipWhiteVo.status !=null">
+      and miw.status = #{ipWhiteVo.status,jdbcType=VARCHAR}
+    </if>
+    <if test="ipWhiteVo.ip !=null and ipWhiteVo.ip !=''">
+      and miw.ip like concat('%',#{ipWhiteVo.ip,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="ipWhiteVo.ipProtocal !=null and ipWhiteVo.ipProtocal !=''">
+      and miw.ip_protocal like concat('%',#{ipWhiteVo.ipProtocal,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="ipWhiteVo.createBeginTime !=null and ipWhiteVo.createBeginTime !=''">
+      and miw.create_time >= #{ipWhiteVo.createBeginTime,jdbcType=VARCHAR}
+    </if>
+    <if test="ipWhiteVo.createEndTime !=null and ipWhiteVo.createEndTime !=''">
+      and miw.create_time &lt;= #{ipWhiteVo.createEndTime,jdbcType=VARCHAR}
+    </if>
+    <if test="ipWhiteVo.createrName !=null and ipWhiteVo.createrName !=''">
+      and miw.creater_name like concat('%',#{ipWhiteVo.createrName,jdbcType=VARCHAR},'%')
+    </if>
+    order by miw.create_time desc
+  </select>
+
+  <select id="selectByContion" parameterType="com.java.yxt.vo.IpWhiteVo" resultMap="BaseResultMap">
+    select id, customer_id, ip_protocal, ip, `status`, tenant_id, creater_id, create_time,
+    updater_id, update_time
+    from mgt_ip_white
+    <where>
+      customer_id = #{customerId,jdbcType=VARCHAR}
+      and ip in
+      <foreach collection="ips" item="item" separator="," open="(" close=")" index="index">
+        #{item.ip,jdbcType=VARCHAR}
+      </foreach>
+    </where>
+  </select>
+
+</mapper>
