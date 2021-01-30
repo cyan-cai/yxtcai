@@ -19,10 +19,10 @@ public class BootSchedule {
     @Autowired
     DefaultMQProducer defaultMQProducer;
 
-    // 每天凌晨1点执行一次
-    @Scheduled(fixedRate = 20000)
+
+    @Scheduled(fixedRate = 15000)
     public void schedule01() throws InterruptedException, RemotingException, MQClientException, MQBrokerException {
-            String msg="终于好了 草他妈的";
+            String msg="黄钰滢小仙女";
             logger.info("开始发送消息"+msg);
             defaultMQProducer.send(new Message("topic2","mytag",msg.getBytes()));
     }
